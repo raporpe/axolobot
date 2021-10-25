@@ -1,0 +1,22 @@
+name: Actions after push
+on: 
+  push:
+    branches: [main]
+jobs:
+  build:
+    name: Lint, build, compile and deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          # Full git history is needed to get a proper list of changed files within `super-linter`
+          fetch-depth: 0
+      # Checkout to code base
+      - name: Super-Linter
+        uses: github/super-linter@v4.8.1
+        env: 
+          DEFAULT_BRANCH: master
+
+
