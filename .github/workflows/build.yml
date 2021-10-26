@@ -28,7 +28,7 @@ jobs:
         with:
           context: ./neural-network
           push: true
-          labels: raporpe/axolobot-neural-network:${{ env.RELEASE_VERSION }}
+          tags: raporpe/axolobot-neural-network:${{ env.RELEASE_VERSION }}
       
       - name: Build and push Docker image for the twitter bot
         uses: docker/build-push-action@v2.7.0
