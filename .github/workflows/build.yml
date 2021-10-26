@@ -1,22 +1,40 @@
 name: Actions after push
 on: 
   push:
-    branches: [main]
+    tags: 
+      - v*
 jobs:
   build:
-    name: Lint, build, compile and deploy
+    name: Build and deploy
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
+
+      - name: Get the version
+        id: version
+        run: echo "RELEASE_VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+              
+      - name: Log in to the GitHub container registry
+        uses: docker/login-action@v1.10.0
         with:
-          # Full git history is needed to get a proper list of changed files within `super-linter`
-          fetch-depth: 0
-      # Checkout to code base
-      - name: Super-Linter
-        uses: github/super-linter@v4.8.1
-        env: 
-          DEFAULT_BRANCH: master
+          registry: ghcr.io
+          username: raporpe
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image for the neural network
+        uses: docker/build-push-action@v2.7.0
+        with:
+          context: ./neural-network
+          push: true
+          labels: raporpe/axolobot-neural-network:${{ env.RELEASE_VERSION }}
+      
+      - name: Build and push Docker image for the twitter bot
+        uses: docker/build-push-action@v2.7.0
+        with:
+          context: ./twitter-bot
+          push: true
+          tags: raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
 
 
