@@ -1,14 +1,26 @@
-from tensorflow.keras import layers
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.preprocessing.text import Tokenizer
+from sklearn.preprocessing import LabelBinarizer
 from nltk.corpus import stopwords
-from collections import Counter
 from tensorflow import keras
 import pandas as pd
+import numpy as np
 import re
 
 
-df = pd.read_csv("train.csv")
+df = pd.read_csv("text_emotion.csv")
+
+#combinar Classes
+
+df.loc[df['sentiment'] == "anger", 'sentiment'] = "hate"
+df.loc[df['sentiment'] == "empty", 'sentiment'] = "sadness"
+df.loc[df['sentiment'] == "boredom", 'sentiment'] = "sadness"
+df.loc[df['sentiment'] == "worry", 'sentiment'] = "sadness"
+df.loc[df['sentiment'] == "hate", 'sentiment'] = "sadness"
+df.loc[df['sentiment'] == "enthusiasm", 'sentiment'] = "happiness"
+df.loc[df['sentiment'] == "fun", 'sentiment'] = "happiness"
+df.loc[df['sentiment'] == "relief", 'sentiment'] = "happiness"
+df.loc[df['sentiment'] == "love", 'sentiment'] = "happiness"
+df.loc[df['sentiment'] == "surprise", 'sentiment'] = "happiness"
+
 
 # Preprocesado
 
@@ -22,7 +34,7 @@ def process_text(text):
     text = mentions.sub(' entity', text)
     return text.strip().lower()
 
-df['Tweet'] = df.tweet.apply(process_text)
+df['content'] = df.content.apply(process_text)
 
 # Eliminando las stop words
 
@@ -33,78 +45,52 @@ def remove_stopwords(text):
                       for word in text.split() if word.lower() not in stop]
     return " ".join(filtered_words)
 
-df["Tweet"] = df.tweet.map(remove_stopwords)
+df["content"] = df.content.map(remove_stopwords)
 
-df.to_csv("corpus.csv")
-
-# Obtener el numero de palabras únicas de nuestro corpus
-
-def counter_word(text_col):
-    count = Counter()
-    for text in text_col.values:
-        for word in text.split():
-            count[word] += 1
-    return count
-
-counter = counter_word(df.tweet)
-num_unique_words = len(counter)
 
 # Separar datos de entramiento y validacion
+
+encoder = LabelBinarizer()
 
 train_size = int(df.shape[0]*0.8)
 
 train_df = df[:train_size]
 val_df = df[train_size:]
 
-train_sentences = train_df.tweet.to_numpy()
-train_labels = train_df.label.to_numpy()
-val_sentences = val_df.tweet.to_numpy()
-val_labels = val_df.label.to_numpy()
-
-# Crear tokenizador con el corpus
-tokenizer = Tokenizer(num_words=num_unique_words)
-tokenizer.fit_on_texts(train_sentences)
-
-# Tokenizar nuestras instancias de entrenamiento y validación
-train_sequences = tokenizer.texts_to_sequences(train_sentences)
-val_sequences = tokenizer.texts_to_sequences(val_sentences)
-
-# Necesitamos a todas las instances con la misma longitud por lo que usamos pad
-
-max_length = 20 # Longitud maxima arbitraria
-
-train_padded = pad_sequences(
-    train_sequences, maxlen=max_length, padding="post", truncating="post")
-val_padded = pad_sequences(
-    val_sequences, maxlen=max_length, padding="post", truncating="post")
+train_sentences = train_df.content.to_numpy()
+train_labels = encoder.fit_transform(train_df.sentiment)
+val_sentences = val_df.content.to_numpy()
+val_labels = encoder.fit_transform(val_df.sentiment)
 
 # Creamos el modelo con keras
 
-model = keras.models.Sequential()
-model.add(layers.Embedding(num_unique_words, 32, input_length=max_length))
-model.add(layers.LSTM(64, dropout=0.1))
-model.add(layers.Dense(1, activation="sigmoid"))
+VOCAB_SIZE = 1000
+encoderLayer = keras.layers.TextVectorization(max_tokens=VOCAB_SIZE)
+encoderLayer.adapt(train_sentences)
 
-print(model.summary())
+model = keras.Sequential([
+    encoderLayer,
+    keras.layers.Embedding(input_dim=len(encoderLayer.get_vocabulary()),output_dim=64),
+    keras.layers.LSTM(64),
+    keras.layers.Dense(64, activation='relu'),
+    keras.layers.Dense(64, activation='relu'),
+    keras.layers.Dense(3, activation='softmax')
+])
 
 # Parametros para el entramiento
 
-loss = keras.losses.BinaryCrossentropy(from_logits=False)
 optim = keras.optimizers.Adam(learning_rate=0.001)
-metrics = ["accuracy"]
 
-model.compile(loss=loss, optimizer=optim, metrics=metrics)
+model.compile(loss="categorical_crossentropy", optimizer=optim, metrics="accuracy")
 
-model.fit(train_padded, train_labels, epochs=10,
-          validation_data=(val_padded, val_labels),batch_size=800, verbose=1)
+model.fit(train_sentences , train_labels, epochs=1, validation_data=(val_sentences, val_labels),batch_size=10, verbose=1)
 
-model.save("sentiments.h5")
+model.save("sentiments_model")
 
 # Comprobamos el modelo
 
-val_predictions = model.predict(val_padded)
-val_predictions = ["positive" if p > 0.7 else "neutral" if p >
-                   0.5 else "negative" for p in val_predictions]
-print(val_sentences[50:55])
-print(val_labels[50:55])
-print(val_predictions[50:55])
+prediction = model.predict(val_sentences)
+testPred = np.argmax(prediction, axis=1)
+classPred = encoder.classes_[testPred]
+print(val_sentences[20:30])
+print(classPred[20:30])

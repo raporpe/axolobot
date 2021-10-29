@@ -1,38 +1,21 @@
 # Neural network api that uses our bot to calculate the sentiment
-import pandas as pd
-import tensorflow as tf
+
 from tensorflow import keras
-from collections import Counter
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.preprocessing.text import Tokenizer
+import numpy as np
 
-df = pd.read_csv("corpus.csv")
 
-df = df[df['Tweet'].notnull()]
+model = keras.models.load_model('sentiments_model')
 
-# Obtener el numero de palabras únicas de nuestro corpus
 
-def counter_word(text_col):
-    count = Counter()
-    for text in text_col.values:
-        for word in text.split():
-            count[word] += 1
-    return count
-
-counter = counter_word(df.Tweet)
-num_unique_words = len(counter)
-
-max_length = 20 # Longitud maxima arbitraria
-
-model = keras.models.load_model('sentiments.h5')
-tokenizer = Tokenizer(num_words=num_unique_words)
-tokenizer.fit_on_texts(df.Tweet.to_numpy())
+classes = ["Happy","Neutral","Sad"]
 
 while True:
-    frase = input("escribe un tweet:")
-    frase_sequence=tokenizer.texts_to_sequences([frase])
-    print(frase_sequence)
-    frase_padded = pad_sequences(frase_sequence,maxlen=max_length,padding="post", truncating="post")
-    print(frase_padded)
-    print("negative" if model.predict(frase_padded)<0.5 else "positive")
+    frase = input("\nWrite a Tweet:")
+    prediction = model.predict([frase])
+    print("\nPercentage of Happiness:",prediction[0][0])
+    print("Percentage of Neutrality:",prediction[0][1])
+    print("Percentage of Sadness:",prediction[0][2])
+    testPred = np.argmax(prediction, axis=1)[0]
+    classPred = classes[testPred]
+    print(classPred)
 
