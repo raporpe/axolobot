@@ -9,7 +9,7 @@ import re
 df = pd.read_csv("text_emotion.csv")
 
 #combinar Classes
-
+"""
 df.loc[df['sentiment'] == "anger", 'sentiment'] = "hate"
 df.loc[df['sentiment'] == "empty", 'sentiment'] = "sadness"
 df.loc[df['sentiment'] == "boredom", 'sentiment'] = "sadness"
@@ -20,7 +20,7 @@ df.loc[df['sentiment'] == "fun", 'sentiment'] = "happiness"
 df.loc[df['sentiment'] == "relief", 'sentiment'] = "happiness"
 df.loc[df['sentiment'] == "love", 'sentiment'] = "happiness"
 df.loc[df['sentiment'] == "surprise", 'sentiment'] = "happiness"
-
+"""
 
 # Preprocesado
 
@@ -66,7 +66,7 @@ val_labels = encoder.fit_transform(val_df.sentiment)
 
 VOCAB_SIZE = 1000
 encoderLayer = keras.layers.TextVectorization(max_tokens=VOCAB_SIZE)
-encoderLayer.adapt(train_sentences)
+encoderLayer.adapt(df.content.to_numpy())
 
 model = keras.Sequential([
     encoderLayer,
@@ -74,16 +74,18 @@ model = keras.Sequential([
     keras.layers.LSTM(64),
     keras.layers.Dense(64, activation='relu'),
     keras.layers.Dense(64, activation='relu'),
-    keras.layers.Dense(3, activation='softmax')
+    keras.layers.Dense(13, activation='softmax')
 ])
 
 # Parametros para el entramiento
 
-optim = keras.optimizers.Adam(learning_rate=0.001)
+#optim = keras.optimizers.Adam(learning_rate=0.001)
 
-model.compile(loss="categorical_crossentropy", optimizer=optim, metrics="accuracy")
+model.compile(loss="categorical_crossentropy", optimizer="adam", metrics="accuracy")
 
-model.fit(train_sentences , train_labels, epochs=1, validation_data=(val_sentences, val_labels),batch_size=10, verbose=1)
+model.fit(train_sentences , train_labels, epochs=5,batch_size=10, verbose=1)
+
+scores = model.evaluate(val_sentences, val_labels, verbose=1)
 
 model.save("sentiments_model")
 
@@ -92,5 +94,6 @@ model.save("sentiments_model")
 prediction = model.predict(val_sentences)
 testPred = np.argmax(prediction, axis=1)
 classPred = encoder.classes_[testPred]
+print(encoder.classes_)
 print(val_sentences[20:30])
 print(classPred[20:30])

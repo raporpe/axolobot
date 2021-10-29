@@ -5,10 +5,10 @@ df = pd.read_csv("text_emotion.csv")
 print(df['sentiment'].value_counts())
 
 #define values
-#values = ["empty","enthusiasm","boredom","anger"]
+values = ["neutral"]
 
 #drop rows that contain any value in the list
-#df = df[df.sentiment.isin(values) == False]
+df = df[df.sentiment.isin(values) == False]
 
 df.loc[df['sentiment'] == "anger", 'sentiment'] = "hate"
 df.loc[df['sentiment'] == "empty", 'sentiment'] = "sadness"
