@@ -1,0 +1,8 @@
+services:
+  twitter-bot:
+    build: ./twitter-bot/
+  neural-network:
+    build: ./neural-network/
+  redis:
+    image: redis:6
+
