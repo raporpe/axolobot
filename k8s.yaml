@@ -25,16 +25,3 @@ spec:
           ports:
             - containerPort: 1000
               protocol: TCP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: twitter-bot-webhook
-spec:
-  type: LoadBalancer
-  selector:
-    app: axolobot
-  ports:
-    - protocol: TCP
-      port: 443
-      targetPort: 4430
