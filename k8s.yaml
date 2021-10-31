@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: axolobot
+  labels:
+    app: axolobot
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: axolobot
+  template:
+    metadata:
+      labels:
+        app: axolobot
+    spec:
+      containers:
+        - name: twitter-bot
+          image: ghcr.io/raporpe/axolobot-twitter-bot:v0.1.2
+          ports:
+            - containerPort: 4430
+              protocol: TCP
+        - name: neural-network
+          image: ghcr.io/raporpe/axolobot-neural-network:v0.1.2
+          ports:
+            - containerPort: 1000
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: twitter-bot-webhook
+spec:
+  type: LoadBalancer
+  selector:
+    app: axolobot
+  ports:
+    - protocol: TCP
+      port: 443
+      targetPort: 4430
