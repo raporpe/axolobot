@@ -5,7 +5,7 @@ metadata:
   labels:
     app: axolobot
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: axolobot
@@ -20,6 +20,12 @@ spec:
           ports:
             - containerPort: 4430
               protocol: TCP
+          env:
+            - name: BEARER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: bearer-token
+                  name: twitter-api
         - name: neural-network
           image: ghcr.io/raporpe/axolobot-neural-network:v0.1.2
           ports:
