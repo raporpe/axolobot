@@ -7,15 +7,15 @@ import numpy as np
 model = keras.models.load_model('sentiments_model')
 
 
-classes = ["Happy","Neutral","Sad"]
+classes = ["anger", "boredom", "empty", "enthusiasm", "fun", "happiness", "hate", "love",
+ "neutral", "relief", "sadness", "surprise", "worry"]
 
 while True:
     frase = input("\nWrite a Tweet:")
     prediction = model.predict([frase])
-    print("\nPercentage of Happiness:",prediction[0][0])
-    print("Percentage of Neutrality:",prediction[0][1])
-    print("Percentage of Sadness:",prediction[0][2])
+    for sentiment in range(len(classes)):
+        print("Percentage of",classes[sentiment],":",prediction[0][sentiment])
     testPred = np.argmax(prediction, axis=1)[0]
     classPred = classes[testPred]
-    print(classPred)
+    print("\nSentimiento del Tweet:",classPred)
 
