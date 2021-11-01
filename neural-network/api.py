@@ -1,6 +1,5 @@
 # Neural network api that uses our bot to calculate the sentiment
 #from tensorflow import keras
-import numpy as np
 from flask import Flask, json
 from flask import jsonify
 

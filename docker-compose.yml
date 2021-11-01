@@ -1,8 +1,9 @@
 services:
   twitter-bot:
     build: ./twitter-bot/
+    environment:
+      - BEARER_TOKEN=${BEARER_TOKEN}
   neural-network:
     build: ./neural-network/
-  redis:
-    image: redis:6
-
+    ports:
+      - "8080:8080"

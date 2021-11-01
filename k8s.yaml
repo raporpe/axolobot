@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: twitter-bot
-          image: ghcr.io/raporpe/axolobot-twitter-bot:v0.1.2
+          image: ghcr.io/raporpe/axolobot-twitter-bot:v0.2
           env:
             - name: BEARER_TOKEN
               valueFrom:
@@ -24,7 +24,7 @@ spec:
                   key: bearer-token
                   name: twitter-api
         - name: neural-network
-          image: ghcr.io/raporpe/axolobot-neural-network:v0.1.2
+          image: ghcr.io/raporpe/axolobot-neural-network:v0.2
           ports:
             - containerPort: 8080
               protocol: TCP
