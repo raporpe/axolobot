@@ -117,4 +117,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 	fmt.Println("Un tweet de la conversacion", tweets[5].Text)
+
+	// Wait for ever
+	select {}
 }
