@@ -43,7 +43,10 @@ jobs:
           tags: ghcr.io/raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
 
       - name: Deploy all images to kubernetes
-      - run: sudo chown $(id -u):$(id -g) $HOME/.kube/config && echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
-      - run: mkdir -p $HOME/.kube && echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
-      - run: kubectl set image deployment/axolobot neural-network=ghcr.io/raporpe/axolobot-neural-network:${{ env.RELEASE_VERSION }}
-      - run: kubectl set image deployment/axolobot twitter-bot=ghcr.io/raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
+      - run: |
+          mkdir -p $HOME/.kube 
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
+          sudo chown $(id -u):$(id -g) $HOME/.kube/config 
+          echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+          kubectl set image deployment/axolobot neural-network=ghcr.io/raporpe/axolobot-neural-network:${{ env.RELEASE_VERSION }}
+          kubectl set image deployment/axolobot twitter-bot=ghcr.io/raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
