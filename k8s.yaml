@@ -17,9 +17,6 @@ spec:
       containers:
         - name: twitter-bot
           image: ghcr.io/raporpe/axolobot-twitter-bot:v0.1.2
-          ports:
-            - containerPort: 4430
-              protocol: TCP
           env:
             - name: BEARER_TOKEN
               valueFrom:
@@ -29,5 +26,5 @@ spec:
         - name: neural-network
           image: ghcr.io/raporpe/axolobot-neural-network:v0.1.2
           ports:
-            - containerPort: 1000
+            - containerPort: 8080
               protocol: TCP
