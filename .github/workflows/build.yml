@@ -37,7 +37,8 @@ jobs:
           push: true
           tags: ghcr.io/raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
 
-      - uses: actions-hub/kubectl@master
+      - name: Deploy images to kubernetes
+        uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
