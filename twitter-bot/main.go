@@ -9,15 +9,15 @@ import (
 	"os"
 )
 
-type Data struct {
-	ConversationID string
+type Tweet struct {
+	ConversationID string `json:"conversation_id"`
 	ID             string
 	Text           string
 }
 
 type TwitterResponse struct {
-	Data []Data
-	Meta struct {
+	Tweets []Tweet `json:"data"`
+	Meta   struct {
 		OldestID    string
 		NewestID    string
 		ResultCount int
@@ -40,6 +40,11 @@ func getJson(url string) (string, error) {
 		return "", err
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println(resp.Request.URL)
+	}
+	defer resp.Body.Close()
+
 	responseData, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
@@ -48,7 +53,7 @@ func getJson(url string) (string, error) {
 	return string(responseData), nil
 }
 
-func getNewMentions(number int) ([]Data, error) {
+func getNewMentions(number int) ([]Tweet, error) {
 
 	last_mention := 1424882508848435204
 
@@ -63,20 +68,39 @@ func getNewMentions(number int) ([]Data, error) {
 		return nil, err
 	}
 
-	fmt.Println(j)
+	var tr TwitterResponse
+
+	err = json.Unmarshal([]byte(j), &tr)
+	if err != nil {
+		log.Println("Error convirtiendo json a struct obteniendo menciones")
+		return nil, err
+	}
+
+	return tr.Tweets, nil
+
+}
+
+func getTweetsByConversationID(conversation string, number int) ([]Tweet, error) {
+
+	url := fmt.Sprintf(
+		"https://api.twitter.com/2/tweets/search/recent?query=conversation_id:%v%%20-has:media%%20lang:en&max_results=%v&tweet.fields=conversation_id",
+		conversation, number)
+
+	j, err := getJson(url)
+	if err != nil {
+		log.Fatal("Error when retrieving tweets by conversation id")
+		return nil, err
+	}
 
 	var tr TwitterResponse
 
 	err = json.Unmarshal([]byte(j), &tr)
 	if err != nil {
-		log.Println("Error convirtiendo json a struct")
+		log.Println("Error convirtiendo json a struct obteniendo conversaciones")
 		return nil, err
 	}
 
-	log.Println(tr)
-
-	return tr.Data, nil
-
+	return tr.Tweets, nil
 }
 
 func main() {
@@ -86,5 +110,11 @@ func main() {
 		log.Fatal("Error consiguiendo menciones: ", err.Error())
 	}
 
-	fmt.Println(mentions)
+	fmt.Println("Una mencion al bot", mentions[0].Text)
+
+	tweets, err := getTweetsByConversationID("1453481950052700161", 10)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	fmt.Println("Un tweet de la conversacion", tweets[5].Text)
 }
