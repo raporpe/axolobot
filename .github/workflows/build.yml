@@ -43,7 +43,7 @@ jobs:
           tags: ghcr.io/raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
 
       - name: Deploy all images to kubernetes
-      - run: |
+        run: |
           mkdir -p $HOME/.kube 
           echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
           sudo chown $(id -u):$(id -g) $HOME/.kube/config 
