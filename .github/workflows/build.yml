@@ -18,10 +18,11 @@ jobs:
           version: "v1.21.5"
 
       - name: Install kubeconfig
-        run: mkdir -p $HOME/.kube && echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/admin.conf
+      - run: mkdir -p $HOME/.kube && echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/admin.conf
+      - run: sudo chown $(id -u):$(id -g) $HOME/admin.conf
 
       - name: Set the kubeconfig path
-        run: export KUBECONFIG=$HOME/.kube/admin.conf
+        run: export KUBECONFIG=$HOME/admin.conf
 
       - name: Get the version
         id: version
