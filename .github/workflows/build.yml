@@ -37,9 +37,16 @@ jobs:
           push: true
           tags: ghcr.io/raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
 
-      - name: Deploy images to kubernetes
+      - name: Deploy neural network image to kubernetes
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
           args: set image deployment/axolobot neural-network=ghcr.io/raporpe/axolobot-neural-network:${{ env.RELEASE_VERSION }}
+
+      - name: Deploy twitter bot image to kubernetes
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: set image deployment/axolobot neural-network=ghcr.io/raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
