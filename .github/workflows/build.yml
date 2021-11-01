@@ -21,7 +21,7 @@ jobs:
         run: mkdir -p $HOME/.kube && echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
 
       - name: Set the kubeconfig path
-        run: sudo chown $(id -u):$(id -g) $HOME/.kube/config && export KUBECONFIG=$HOME/.kube/config
+        run: sudo chown $(id -u):$(id -g) $HOME/.kube/config && echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
 
       - name: Get the version
         id: version
