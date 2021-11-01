@@ -12,11 +12,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@master
 
-      - name: Kubectl tool installer
-        uses: Azure/setup-kubectl@v1
-        with:
-          version: "v1.21.5"
-
       - name: Get the version
         id: version
         run: echo "RELEASE_VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
@@ -42,12 +37,8 @@ jobs:
           push: true
           tags: ghcr.io/raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
 
-      - name: Deploy all images to kubernetes
-        run: |
-          mkdir -p $HOME/.kube 
-          echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
-          sudo chown $(id -u):$(id -g) $HOME/.kube/config 
-          kubectl --kubeconfig=$HOME/.kube/config set image deployment/axolobot neural-network=ghcr.io/raporpe/axolobot-neural-network:${{ env.RELEASE_VERSION }}
-          kubectl --kubeconfig=$HOME/.kube/config set image deployment/axolobot twitter-bot=ghcr.io/raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
+      - uses: actions-hub/kubectl@master
         env:
-          KUBECONFIG: $HOME/.kube/config
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: set image deployment/axolobot neural-network=ghcr.io/raporpe/axolobot-neural-network:${{ env.RELEASE_VERSION }}
