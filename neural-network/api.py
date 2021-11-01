@@ -1,21 +1,19 @@
 # Neural network api that uses our bot to calculate the sentiment
-
-from tensorflow import keras
+#from tensorflow import keras
 import numpy as np
+from flask import Flask, json
+from flask import jsonify
+
+#model = keras.models.load_model('sentiments_model')
 
 
-model = keras.models.load_model('sentiments_model')
+app = Flask(__name__)
+
+@app.route("/api/v1/sentiment/<s>", methods=["GET"])
+def get_sentiment(s):
+    response = {"sentiment":s}
+    return jsonify(response)
 
 
-classes = ["anger", "boredom", "empty", "enthusiasm", "fun", "happiness", "hate", "love",
- "neutral", "relief", "sadness", "surprise", "worry"]
-
-while True:
-    frase = input("\nWrite a Tweet:")
-    prediction = model.predict([frase])
-    for sentiment in range(len(classes)):
-        print("Percentage of",classes[sentiment],":",prediction[0][sentiment])
-    testPred = np.argmax(prediction, axis=1)[0]
-    classPred = classes[testPred]
-    print("\nSentimiento del Tweet:",classPred)
-
+if __name__ == "__main__":
+    app.run(debug=True)
