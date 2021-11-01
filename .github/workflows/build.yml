@@ -17,12 +17,6 @@ jobs:
         with:
           version: "v1.21.5"
 
-      - name: Install kubeconfig
-        run: mkdir -p $HOME/.kube && echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
-
-      - name: Set the kubeconfig path
-        run: sudo chown $(id -u):$(id -g) $HOME/.kube/config && echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
-
       - name: Get the version
         id: version
         run: echo "RELEASE_VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
@@ -49,7 +43,7 @@ jobs:
           tags: ghcr.io/raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
 
       - name: Deploy new neural network image to kubernetes
-        run: kubectl set image deployment/axolobot neural-network=ghcr.io/raporpe/axolobot-neural-network:${{ env.RELEASE_VERSION }}
-
-      - name: Deploy new twitter bot image to kubernetes
-        run: kubectl set image deployment/axolobot twitter-bot=ghcr.io/raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
+      - run: sudo chown $(id -u):$(id -g) $HOME/.kube/config && echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+      - run: mkdir -p $HOME/.kube && echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
+      - run: kubectl set image deployment/axolobot neural-network=ghcr.io/raporpe/axolobot-neural-network:${{ env.RELEASE_VERSION }}
+      - run: kubectl set image deployment/axolobot twitter-bot=ghcr.io/raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
