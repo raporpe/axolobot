@@ -18,13 +18,29 @@ spec:
         - name: twitter-bot
           image: ghcr.io/raporpe/axolobot-twitter-bot:v0.2
           env:
-            - name: BEARER_TOKEN
+            - name: AUTH_TOKENS
               valueFrom:
                 secretKeyRef:
-                  key: bearer-token
-                  name: twitter-api
+                  key: AUTH_TOKENS
+                  name: axolobot
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: axolobot
         - name: neural-network
           image: ghcr.io/raporpe/axolobot-neural-network:v0.2
           ports:
             - containerPort: 8080
               protocol: TCP
+        - name: db
+          image: ghcr.io/raporpe/axolobot-db:v0.2
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: axolobot
