@@ -1,0 +1,19 @@
+{
+    // Use IntelliSense para saber los atributos posibles.
+    // Mantenga el puntero para ver las descripciones de los existentes atributos.
+    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch file",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${file}",
+            "env": {
+                "AUTH_TOKENS": "2iywyIUe26SToxAE2AhGVMrd3:QrxJ8U4VGExcGX5DGUlo6efqNBaolhVMPR5SrzAGNYf9hX85vZ:1451497427098275860-G9yCKjzjfvn37Pc8O4v64z6mzSbLfc:Wn0TJudPq0rw63Lp47eWAVMBbzqqMOAPI0bzWZWQTwprS",
+                "DB_PASSWORD": "axolobot"
+            }
+        }
+    ]
+}

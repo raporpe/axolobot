@@ -2,8 +2,25 @@ services:
   twitter-bot:
     build: ./twitter-bot/
     environment:
-      - BEARER_TOKEN=${BEARER_TOKEN}
+      - AUTH_TOKENS=${AUTH_TOKENS}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - "db"
   neural-network:
     build: ./neural-network/
     ports:
       - "8080:8080"
+  db:
+    build: ./database/
+    volumes:
+      - database:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    ports:
+      - '3306:3306'
+
+
+volumes:
+  database:
