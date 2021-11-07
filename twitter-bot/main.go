@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -23,6 +23,7 @@ type Tweet struct {
 	ID             string
 	Text           string
 	InReplyToID    string `json:"in_reply_to_status_id"`
+	UserID         string `json:"author_id"`
 }
 
 type TwitterResponse struct {
@@ -34,15 +35,19 @@ type TwitterResponse struct {
 	}
 }
 
-type TwitterClient struct {
-	httpClient             *http.Client
-	clientUserID           string
-	lastRetrievedMentionID string
-	db                     *sql.DB
+type UserLookupResponse struct {
+	Data struct {
+		Username string `json:"username"`
+	}
 }
 
-func remove(slice []int, s int) []int {
-	return append(slice[:s], slice[s+1:]...)
+type TwitterClient struct {
+	httpClient *http.Client
+	db         *DatabaseManager
+}
+
+func GetClassification(text string) int {
+	return 0
 }
 
 func (c *TwitterClient) makeRequest(method string, url string) (string, error) {
@@ -75,12 +80,18 @@ func (c *TwitterClient) makeRequest(method string, url string) (string, error) {
 
 func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 
-	last_mention := 1424882508848435204
+	last_mention := c.db.GetLastMentionID()
+	log.Println("The last mention is -> " + last_mention)
 
-	axolobot_user := 1451497427098275860
-	url := fmt.Sprintf(
-		"https://api.twitter.com/2/users/%v/mentions?max_results=%v&since_id=%v&tweet.fields=conversation_id",
-		axolobot_user, number, last_mention)
+	axolobotUser := 1451497427098275860
+
+	params := url.Values{}
+	params.Add("max_results", strconv.Itoa(number))
+	params.Add("since_id", last_mention)
+	params.Add("tweet.fields", "conversation_id")
+	params.Add("expansions", "author_id")
+
+	url := "https://api.twitter.com/2/users/" + strconv.Itoa(axolobotUser) + "/mentions?" + params.Encode()
 
 	j, err := c.makeRequest("GET", url)
 	if err != nil {
@@ -101,14 +112,9 @@ func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 
 	// Discard the ones in the database and insert the new ones
 	for _, tweet := range tweets {
-		row := c.db.QueryRow("SELECT count(*) as count from axolobot.mention where mention_id = ?", tweet.ID)
-		if err != nil {
-			return nil, err
-		}
-		var count int
-		row.Scan(&count)
-		if count == 0 {
-			_, err := c.db.Query("INSERT INTO mention VALUES (?)", tweet.ID)
+
+		if !c.db.IsMentionDone(tweet) {
+			err := c.db.InsertMention(tweet)
 			if err != nil {
 				return nil, err
 			}
@@ -120,11 +126,16 @@ func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 
 }
 
-func (c *TwitterClient) GetTweetsByConversationID(conversation string, number int) ([]Tweet, error) {
+func (c *TwitterClient) GetTweetsByConversationID(conversation string) ([]Tweet, error) {
 
-	url := fmt.Sprintf(
-		"https://api.twitter.com/2/tweets/search/recent?query=conversation_id:%v%%20-has:media%%20lang:en&max_results=%v&tweet.fields=conversation_id",
-		conversation, number)
+	params := url.Values{}
+	query := fmt.Sprintf("conversation_id:%v -has:media lang:en", conversation)
+	params.Add("query", query)
+	params.Add("tweet.fields", "conversation_id")
+	params.Add("max_results", "100")
+	params.Add("expansions", "author_id")
+
+	url := "https://api.twitter.com/2/tweets/search/recent?" + params.Encode()
 
 	j, err := c.makeRequest("GET", url)
 	if err != nil {
@@ -143,19 +154,42 @@ func (c *TwitterClient) GetTweetsByConversationID(conversation string, number in
 	return tr.Tweets, nil
 }
 
+func (c *TwitterClient) GetUsernameByUserID(userID string) (string, error) {
+
+	j, err := c.makeRequest("GET", "https://api.twitter.com/2/users/"+userID)
+	if err != nil {
+		return "", err
+	}
+
+	var userLookupResponse UserLookupResponse
+	json.Unmarshal([]byte(j), &userLookupResponse)
+	if err != nil {
+		log.Println("Error en la respuesta al extraer username por userID")
+		return "", err
+	}
+
+	return userLookupResponse.Data.Username, nil
+
+}
+
 func (c *TwitterClient) PostResponse(tweet Tweet) error {
+
+	username, err := c.GetUsernameByUserID(tweet.UserID)
+	if err != nil {
+		return err
+	}
 
 	params := url.Values{}
 
-	params.Add("status", tweet.Text)
+	params.Add("status", "@"+username+" "+tweet.Text)
 	params.Add("in_reply_to_status_id", tweet.InReplyToID)
 
 	url := "https://api.twitter.com/1.1/statuses/update.json?" + params.Encode()
+	fmt.Println(url)
 
-	_, err := c.makeRequest("POST", url)
+	_, err = c.makeRequest("POST", url)
 	if err != nil {
-		log.Fatal("Error when publishing tweet")
-		return err
+		log.Fatal("Error when publishing tweet: " + err.Error())
 	}
 
 	return nil
@@ -177,15 +211,9 @@ func NewTwitterClient() *TwitterClient {
 	// httpClient will automatically authorize http.Request's
 	client := config.Client(oauth1.NoContext, oAuthToken)
 
-	dbPassword := os.Getenv("DB_PASSWORD")
-	database, err := sql.Open("mysql", "root:"+dbPassword+"@tcp(db:3306)/axolobot")
-	if err != nil {
-		return nil
-	}
-
 	return &TwitterClient{
 		httpClient: client,
-		db:         database,
+		db:         NewDatabaseManager(),
 	}
 
 }
@@ -239,12 +267,41 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 
 		mention := <-mentionExchanger
 		log.Println(" 🌟 Answering to Tweet -> " + mention.Text)
+
+		// Get the tweets in that conversation
+		tweetsToAnalyze, err := twitterClient.GetTweetsByConversationID(mention.ConversationID)
+		fmt.Println(tweetsToAnalyze)
+		if err != nil {
+			log.Fatal("Error when getting the tweets to analyze from twitter in conversaionID -> " + mention.ConversationID)
+			mentionExchanger <- mention
+			continue
+		}
+		// Analyze the tweets using the neural network
+		result, err := AnalyzeTweets(tweetsToAnalyze)
+		if err != nil {
+			log.Fatal("Error when passing the tweets to the neural network: " + err.Error())
+			mentionExchanger <- mention
+			continue
+		}
+
+		responseText := "Hi there! The result is " + strconv.Itoa(result)
+
 		response := Tweet{
 			InReplyToID: mention.ID,
-			Text:        "I am still in development",
+			Text:        responseText,
+			UserID:      mention.UserID,
 		}
-		twitterClient.PostResponse(response)
+		err = twitterClient.PostResponse(response)
+		if err != nil {
+			log.Fatal("Could not process mention with id " + mention.ID + ": " + err.Error())
+			mentionExchanger <- mention
+			continue
+		}
 
 	}
 
+}
+
+func AnalyzeTweets(tweets []Tweet) (int, error) {
+	return 0, nil
 }
