@@ -20,6 +20,12 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     ports:
       - '3306:3306'
+  public-api:
+    build: ./public-api/
+    ports:
+      - "80:8080"
+    environment:
+      - DB_PASSWORD=${DB_PASSWORD}
 
 
 volumes:
