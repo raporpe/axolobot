@@ -46,8 +46,23 @@ type TwitterClient struct {
 	db         *DatabaseManager
 }
 
-func GetClassification(text string) int {
-	return 0
+// Still to implement
+func GetClassification(text string) (int, error) {
+	resp, err := http.Get("http://neural-network:8080/api/v1/sentiment/" + url.PathEscape(text))
+	if err != nil {
+		log.Fatal("Cannot contact with the neural network api")
+		return -1, err
+	}
+
+	responseData, _ := ioutil.ReadAll(resp.Body)
+	var data map[string]int
+	err = json.Unmarshal(responseData, &data)
+	if err != nil {
+		log.Fatal("There was an error reading the response from the neural network api")
+		return -1, err
+	}
+
+	return data["something"], nil
 }
 
 func (c *TwitterClient) makeRequest(method string, url string) (string, error) {
@@ -221,12 +236,6 @@ func NewTwitterClient() *TwitterClient {
 func main() {
 
 	twitterClient := NewTwitterClient()
-
-	//tweets, err := twitterClient.GetTweetsByConversationID("1453481950052700161", 10)
-	//if err != nil {
-	//	log.Fatal(err.Error())
-	//}
-	//fmt.Println("Un tweet de la conversacion", tweets[0].Text)
 
 	mentionExchanger := make(chan Tweet, 100)
 
