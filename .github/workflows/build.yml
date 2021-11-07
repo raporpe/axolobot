@@ -37,6 +37,20 @@ jobs:
           push: true
           tags: ghcr.io/raporpe/axolobot-twitter-bot:${{ env.RELEASE_VERSION }}
 
+      - name: Build and push Docker image for the database
+        uses: docker/build-push-action@v2.7.0
+        with:
+          context: ./database
+          push: true
+          tags: ghcr.io/raporpe/axolobot-db:${{ env.RELEASE_VERSION }}
+
+      - name: Build and push Docker image for the public api
+        uses: docker/build-push-action@v2.7.0
+        with:
+          context: ./public-api
+          push: true
+          tags: ghcr.io/raporpe/axolobot-public-api:${{ env.RELEASE_VERSION }}
+
       - name: Deploy twitter-bot image to kubernetes
         uses: actions-hub/kubectl@master
         env:
@@ -57,3 +71,10 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
           args: set image deployment/axolobot db=ghcr.io/raporpe/axolobot-db:${{ env.RELEASE_VERSION }}
+
+      - name: Deploy public-api image to kubernetes
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: set image deployment/axolobot public-api=ghcr.io/raporpe/public-api:${{ env.RELEASE_VERSION }}
