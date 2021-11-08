@@ -1,8 +1,9 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: database
 spec:
+  serviceName: "bot-database"
   replicas: 1
   selector:
     matchLabels:
@@ -12,15 +13,31 @@ spec:
       labels:
         app: database
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
         - name: database
           image: ghcr.io/raporpe/axolobot-database:v0.2
           ports:
             - containerPort: 3306
               protocol: TCP
+          volumeMounts:
+            - name: database-pvc
+              mountPath: /var/lib/mysql
           env:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: DB_PASSWORD
                   name: axolobot
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: database-pvc
+spec:
+  storageClassName: microk8s-hostpath
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

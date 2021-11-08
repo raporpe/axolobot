@@ -19,7 +19,7 @@ func NewDatabaseManager() *DatabaseManager {
 	settings := mysql.ConnectionURL{
 		User:     "root",
 		Password: dbPassword,
-		Host:     "localhost",
+		Host:     "database",
 		Database: "axolobot",
 	}
 

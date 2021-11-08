@@ -8,11 +8,12 @@ from flask import jsonify
 
 app = Flask(__name__)
 
+
 @app.route("/api/v1/sentiment/<s>", methods=["GET"])
 def get_sentiment(s):
-    response = {"sentiment":s}
+    response = {"sentiment": s}
     return jsonify(response)
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8080)
+    app.run(debug=True, port=8081)

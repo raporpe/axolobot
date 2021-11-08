@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: neural-network
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: neural-network
+  template:
+    metadata:
+      labels:
+        app: neural-network
+    spec:
+      containers:
+        - name: neural-network
+          image: ghcr.io/raporpe/axolobot-neural-network:v0.2
+          ports:
+            - containerPort: 8081
+              protocol: TCP

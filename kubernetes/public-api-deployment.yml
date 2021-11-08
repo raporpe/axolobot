@@ -1,53 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: axolobot
-  labels:
-    app: axolobot
+  name: public-api
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: axolobot
+      app: public-api
   template:
     metadata:
       labels:
-        app: axolobot
+        app: public-api
     spec:
       containers:
-        - name: twitter-bot
-          image: ghcr.io/raporpe/axolobot-twitter-bot:v0.2
-          env:
-            - name: AUTH_TOKENS
-              valueFrom:
-                secretKeyRef:
-                  key: AUTH_TOKENS
-                  name: axolobot
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  key: DB_PASSWORD
-                  name: axolobot
-        - name: neural-network
-          image: ghcr.io/raporpe/axolobot-neural-network:v0.2
-          ports:
-            - containerPort: 8080
-              protocol: TCP
-        - name: db
-          image: ghcr.io/raporpe/axolobot-db:v0.2
-          ports:
-            - containerPort: 3306
-              protocol: TCP
-          env:
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  key: DB_PASSWORD
-                  name: axolobot
         - name: public-api
           image: ghcr.io/raporpe/public-api:v0.2
           ports:
-            - containerPort: 80
+            - containerPort: 9090
               protocol: TCP
           env:
             - name: DB_PASSWORD
