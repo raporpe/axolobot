@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: public-api
-          image: ghcr.io/raporpe/public-api:v0.2
+          image: ghcr.io/raporpe/axolobot-public-api:v0.4
           ports:
             - containerPort: 9090
               protocol: TCP

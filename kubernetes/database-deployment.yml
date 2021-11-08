@@ -16,19 +16,23 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: database
-          image: ghcr.io/raporpe/axolobot-database:v0.2
+          image: ghcr.io/raporpe/axolobot-database:v0.4
           ports:
             - containerPort: 3306
               protocol: TCP
           volumeMounts:
-            - name: database-pvc
+            - name: database-vol
               mountPath: /var/lib/mysql
           env:
-            - name: DB_PASSWORD
+            - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: DB_PASSWORD
                   name: axolobot
+      volumes:
+        - name: database-vol
+          persistentVolumeClaim:
+            claimName: database-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

@@ -63,6 +63,7 @@ func (db *DatabaseManager) GetLastMentionID() string {
 	err := res.One(&lastMention)
 	if err != nil {
 		log.Fatal("There was an error getting mentions in database: " + err.Error())
+		return "1"
 	}
 	fmt.Println(lastMention)
 	return (lastMention["mention_id"])
