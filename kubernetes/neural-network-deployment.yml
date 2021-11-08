@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: neural-network
-          image: ghcr.io/raporpe/axolobot-neural-network:v0.4
+          image: ghcr.io/raporpe/axolobot-neural-network:v0.4.2
           ports:
             - containerPort: 8081
               protocol: TCP

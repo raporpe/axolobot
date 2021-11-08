@@ -14,9 +14,9 @@ spec:
     spec:
       containers:
         - name: public-api
-          image: ghcr.io/raporpe/axolobot-public-api:v0.4
+          image: ghcr.io/raporpe/axolobot-public-api:v0.4.2
           ports:
-            - containerPort: 9090
+            - containerPort: 8080
               protocol: TCP
           env:
             - name: DB_PASSWORD

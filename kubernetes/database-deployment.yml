@@ -16,7 +16,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: database
-          image: ghcr.io/raporpe/axolobot-database:v0.4
+          image: ghcr.io/raporpe/axolobot-database:v0.4.2
           ports:
             - containerPort: 3306
               protocol: TCP

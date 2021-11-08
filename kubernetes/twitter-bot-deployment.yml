@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: twitter-bot
-          image: ghcr.io/raporpe/axolobot-twitter-bot:v0.4
+          image: ghcr.io/raporpe/axolobot-twitter-bot:v0.4.2
           env:
             - name: AUTH_TOKENS
               valueFrom:

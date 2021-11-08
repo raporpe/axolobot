@@ -2,11 +2,11 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: axolobot-ingress
-#  annotations:
+  annotations:
+    kubernetes.io/ingress.class: public
 #    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: api.axolobot.ml
     - http:
         paths:
           - path: /
@@ -15,4 +15,4 @@ spec:
               service:
                 name: public-api
                 port:
-                  number: 80
+                  number: 8080
