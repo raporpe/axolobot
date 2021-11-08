@@ -44,3 +44,14 @@ spec:
                 secretKeyRef:
                   key: DB_PASSWORD
                   name: axolobot
+        - name: public-api
+          image: ghcr.io/raporpe/public-api:v0.2
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: axolobot
