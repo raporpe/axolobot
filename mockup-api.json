@@ -1,0 +1,142 @@
+{
+    "source": "mockoon:1.16.0",
+    "data": [
+        {
+            "type": "environment",
+            "item": {
+                "uuid": "694800dc-0b60-4c3c-81d7-5cfa205dc7dd",
+                "lastMigration": 18,
+                "name": "Twitter",
+                "endpointPrefix": "",
+                "latency": 0,
+                "port": 3001,
+                "hostname": "0.0.0.0",
+                "routes": [
+                    {
+                        "uuid": "d25e4dae-de1e-4db3-af8f-cf58eb307986",
+                        "documentation": "get user by id for author id",
+                        "method": "get",
+                        "endpoint": "2/users/:id",
+                        "responses": [
+                            {
+                                "uuid": "1b32a4ef-6b38-4a84-b7b3-510de8433f9b",
+                                "body": "{\r\n    \"data\": {\r\n        \"id\": \"1451497427098275860\",\r\n        \"name\": \"AxoloBot\",\r\n        \"username\": \"axolobot\"\r\n    }\r\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "fd36ce89-d753-4b8d-bfd8-2fb6609fb076",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "2/users/*/mentions",
+                        "responses": [
+                            {
+                                "uuid": "3cbf4a1b-3d8a-40cf-9ba7-48b516e8e625",
+                                "body": "{\r\n    \"meta\": {\r\n        \"result_count\": 0\r\n    }\r\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "51342514-5619-4466-b4d6-b21bfbda5ba0",
+                        "documentation": "",
+                        "method": "post",
+                        "endpoint": "1.1/statuses/update.json",
+                        "responses": [
+                            {
+                                "uuid": "ff2070a7-686b-4137-a246-8d2e026f09ff",
+                                "body": "{\r\n    \"created_at\": \"Tue Nov 09 18:33:05 +0000 2021\",\r\n    \"id\": 1458140602118246402,\r\n    \"id_str\": \"1458140602118246402\",\r\n    \"text\": \"test231\",\r\n    \"truncated\": false,\r\n    \"entities\": {\r\n        \"hashtags\": [],\r\n        \"symbols\": [],\r\n        \"user_mentions\": [],\r\n        \"urls\": []\r\n    },\r\n    \"source\": \"<a href=\\\"https://help.twitter.com/en/using-twitter/how-to-tweet#source-labels\\\" rel=\\\"nofollow\\\">axolobot</a>\",\r\n    \"in_reply_to_status_id\": null,\r\n    \"in_reply_to_status_id_str\": null,\r\n    \"in_reply_to_user_id\": null,\r\n    \"in_reply_to_user_id_str\": null,\r\n    \"in_reply_to_screen_name\": null,\r\n    \"user\": {\r\n        \"id\": 1451497427098275860,\r\n        \"id_str\": \"1451497427098275860\",\r\n        \"name\": \"AxoloBot\",\r\n        \"screen_name\": \"axolobot\",\r\n        \"location\": \"Madrid\",\r\n        \"description\": \"Hi! I'm the Axolobot!\",\r\n        \"url\": null,\r\n        \"entities\": {\r\n            \"description\": {\r\n                \"urls\": []\r\n            }\r\n        },\r\n        \"protected\": false,\r\n        \"followers_count\": 3,\r\n        \"friends_count\": 0,\r\n        \"listed_count\": 0,\r\n        \"created_at\": \"Fri Oct 22 10:35:42 +0000 2021\",\r\n        \"favourites_count\": 0,\r\n        \"utc_offset\": null,\r\n        \"time_zone\": null,\r\n        \"geo_enabled\": false,\r\n        \"verified\": false,\r\n        \"statuses_count\": 195,\r\n        \"lang\": null,\r\n        \"contributors_enabled\": false,\r\n        \"is_translator\": false,\r\n        \"is_translation_enabled\": false,\r\n        \"profile_background_color\": \"F5F8FA\",\r\n        \"profile_background_image_url\": null,\r\n        \"profile_background_image_url_https\": null,\r\n        \"profile_background_tile\": false,\r\n        \"profile_image_url\": \"http://pbs.twimg.com/profile_images/1451505377896505366/HpICxf7o_normal.jpg\",\r\n        \"profile_image_url_https\": \"https://pbs.twimg.com/profile_images/1451505377896505366/HpICxf7o_normal.jpg\",\r\n        \"profile_banner_url\": \"https://pbs.twimg.com/profile_banners/1451497427098275860/1634902447\",\r\n        \"profile_link_color\": \"1DA1F2\",\r\n        \"profile_sidebar_border_color\": \"C0DEED\",\r\n        \"profile_sidebar_fill_color\": \"DDEEF6\",\r\n        \"profile_text_color\": \"333333\",\r\n        \"profile_use_background_image\": true,\r\n        \"has_extended_profile\": true,\r\n        \"default_profile\": true,\r\n        \"default_profile_image\": false,\r\n        \"following\": false,\r\n        \"follow_request_sent\": false,\r\n        \"notifications\": false,\r\n        \"translator_type\": \"none\",\r\n        \"withheld_in_countries\": []\r\n    },\r\n    \"geo\": null,\r\n    \"coordinates\": null,\r\n    \"place\": null,\r\n    \"contributors\": null,\r\n    \"is_quote_status\": false,\r\n    \"retweet_count\": 0,\r\n    \"favorite_count\": 0,\r\n    \"favorited\": false,\r\n    \"retweeted\": false,\r\n    \"lang\": \"en\"\r\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    },
+                    {
+                        "uuid": "7852d03e-893d-4a97-bec3-642095bd2859",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "2/tweets/search/recent",
+                        "responses": [
+                            {
+                                "uuid": "7838e350-8253-4cbc-becc-98fe5bd3de72",
+                                "body": "{\r\n    \"data\": [\r\n        {\r\n            \"conversation_id\": \"1167748981188902914\",\r\n            \"text\": \"@dgpmakes Hi there! The result is 0\",\r\n            \"id\": \"1457756964231028736\",\r\n            \"author_id\": \"1451497427098275860\"\r\n        },\r\n        {\r\n            \"conversation_id\": \"1167748981188902914\",\r\n            \"text\": \"@Vincredible__ @axolobot\",\r\n            \"id\": \"1457336770681577474\",\r\n            \"author_id\": \"1106530497482625024\"\r\n        },\r\n        {\r\n            \"conversation_id\": \"1167748981188902914\",\r\n            \"text\": \"@Vincredible__ Everything grows n the Congo\",\r\n            \"id\": \"1456913973601832965\",\r\n            \"author_id\": \"1423986977066651653\"\r\n        }\r\n    ],\r\n    \"includes\": {\r\n        \"users\": [\r\n            {\r\n                \"id\": \"1451497427098275860\",\r\n                \"name\": \"AxoloBot\",\r\n                \"username\": \"axolobot\"\r\n            },\r\n            {\r\n                \"id\": \"1106530497482625024\",\r\n                \"name\": \"• Diego G •\",\r\n                \"username\": \"dgpmakes\"\r\n            },\r\n            {\r\n                \"id\": \"1423986977066651653\",\r\n                \"name\": \"A\",\r\n                \"username\": \"ATG764\"\r\n            }\r\n        ]\r\n    },\r\n    \"meta\": {\r\n        \"newest_id\": \"1457756964231028736\",\r\n        \"oldest_id\": \"1456913973601832965\",\r\n        \"result_count\": 3\r\n    }\r\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    }
+                ],
+                "proxyMode": false,
+                "proxyHost": "",
+                "proxyRemovePrefix": false,
+                "https": false,
+                "cors": true,
+                "headers": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "proxyReqHeaders": [
+                    {
+                        "key": "",
+                        "value": ""
+                    }
+                ],
+                "proxyResHeaders": [
+                    {
+                        "key": "",
+                        "value": ""
+                    }
+                ]
+            }
+        }
+    ]
+}

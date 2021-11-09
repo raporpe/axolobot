@@ -44,6 +44,7 @@ type UserLookupResponse struct {
 type TwitterClient struct {
 	httpClient *http.Client
 	db         *DatabaseManager
+	hostname   string
 }
 
 // Still to implement
@@ -106,7 +107,7 @@ func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 	params.Add("tweet.fields", "conversation_id")
 	params.Add("expansions", "author_id")
 
-	url := "https://api.twitter.com/2/users/" + strconv.Itoa(axolobotUser) + "/mentions?" + params.Encode()
+	url := c.hostname + "/2/users/" + strconv.Itoa(axolobotUser) + "/mentions?" + params.Encode()
 
 	j, err := c.makeRequest("GET", url)
 	if err != nil {
@@ -150,7 +151,7 @@ func (c *TwitterClient) GetTweetsByConversationID(conversation string) ([]Tweet,
 	params.Add("max_results", "100")
 	params.Add("expansions", "author_id")
 
-	url := "https://api.twitter.com/2/tweets/search/recent?" + params.Encode()
+	url := c.hostname + "/2/tweets/search/recent?" + params.Encode()
 
 	j, err := c.makeRequest("GET", url)
 	if err != nil {
@@ -171,7 +172,7 @@ func (c *TwitterClient) GetTweetsByConversationID(conversation string) ([]Tweet,
 
 func (c *TwitterClient) GetUsernameByUserID(userID string) (string, error) {
 
-	j, err := c.makeRequest("GET", "https://api.twitter.com/2/users/"+userID)
+	j, err := c.makeRequest("GET", c.hostname+"/2/users/"+userID)
 	if err != nil {
 		return "", err
 	}
@@ -199,7 +200,7 @@ func (c *TwitterClient) PostResponse(tweet Tweet) error {
 	params.Add("status", "@"+username+" "+tweet.Text)
 	params.Add("in_reply_to_status_id", tweet.InReplyToID)
 
-	url := "https://api.twitter.com/1.1/statuses/update.json?" + params.Encode()
+	url := c.hostname + "/1.1/statuses/update.json?" + params.Encode()
 	fmt.Println(url)
 
 	_, err = c.makeRequest("POST", url)
@@ -214,6 +215,18 @@ func (c *TwitterClient) PostResponse(tweet Tweet) error {
 func NewTwitterClient() *TwitterClient {
 
 	auth_tokens := os.Getenv("AUTH_TOKENS")
+	hostname := "https://api.twitter.com"
+
+	// If in development environment, use mock api
+	if auth_tokens == "" {
+		log.Println("⚒️ Development mode, using mockup api.")
+		return &TwitterClient{
+			httpClient: &http.Client{},
+			db:         NewDatabaseManager(),
+			hostname:   "http://mockup-api:10090",
+		}
+	}
+
 	splitted := strings.Split(auth_tokens, ":")
 	consumerKey := splitted[0]
 	consumerSecret := splitted[1]
@@ -229,6 +242,7 @@ func NewTwitterClient() *TwitterClient {
 	return &TwitterClient{
 		httpClient: client,
 		db:         NewDatabaseManager(),
+		hostname:   hostname,
 	}
 
 }

@@ -2,7 +2,6 @@ services:
   twitter-bot:
     build: ./twitter-bot/
     environment:
-      - AUTH_TOKENS=${AUTH_TOKENS}
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
       - "database"
@@ -26,6 +25,14 @@ services:
       - "10080:8080"
     environment:
       - DB_PASSWORD=${DB_PASSWORD}
+  mockup-api:
+    image: mockoon/cli:latest
+    ports:
+      - "10090:10090"
+    volumes:
+      - ./mockup-api.json:/data
+    command: -d data -i 0 -p 10090
+    
 
 
 volumes:

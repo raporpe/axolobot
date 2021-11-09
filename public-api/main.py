@@ -1,16 +1,28 @@
 # Public api for getting information about axolobot
+from logging import exception
 from flask import Flask
 from flask import jsonify
 import os
 import mysql.connector
+import time
 
 
 app = Flask(__name__)
 db_password = os.getenv("DB_PASSWORD")
-db = mysql.connector.connect(host="database",
-                             database="axolobot",
-                             user="root",
-                             password=db_password)
+
+# Connect to the database
+db = None
+while db == None:
+    try:
+        db = mysql.connector.connect(host="database",
+                                    database="axolobot",
+                                    user="root",
+                                    password=db_password)
+    except:
+        print("❌ Error when connecting to database, retrying...")
+        time.sleep(1)
+        continue
+    break
 
 
 @app.route("/v1/info", methods=["GET"])
