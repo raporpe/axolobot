@@ -5,7 +5,7 @@ services:
       - AUTH_TOKENS=${AUTH_TOKENS}
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
-      - "db"
+      - "database"
   neural-network:
     build: ./neural-network/
     ports:

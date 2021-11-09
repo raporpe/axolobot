@@ -48,7 +48,7 @@ type TwitterClient struct {
 
 // Still to implement
 func GetClassification(text string) (int, error) {
-	resp, err := http.Get("http://neural-network:8081/api/v1/sentiment/" + url.PathEscape(text))
+	resp, err := http.Get("http://neural-network:8081/v1/sentiment/" + url.PathEscape(text))
 	if err != nil {
 		log.Fatal("Cannot contact with the neural network api")
 		return -1, err
