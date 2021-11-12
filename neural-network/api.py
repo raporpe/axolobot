@@ -33,7 +33,7 @@ def predict(text, include_neutral=True):
     # Decode sentiment
     label = decode_sentiment(score, include_neutral=include_neutral)
 
-    return {"sentiment": label, "score": str(score*100)} 
+    return {"sentiment": label, "score": str(int(score[0]*100))} 
 
 
 @ app.route("/v1/sentiment/<sentiment>", methods=["GET"])

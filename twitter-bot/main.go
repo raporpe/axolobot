@@ -130,10 +130,6 @@ func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 	for _, tweet := range tweets {
 
 		if !c.db.IsMentionDone(tweet) {
-			err := c.db.InsertMention(tweet)
-			if err != nil {
-				return nil, err
-			}
 			newTweets = append(newTweets, tweet)
 		}
 	}
@@ -212,6 +208,14 @@ func (c *TwitterClient) PostResponse(tweet Tweet) error {
 
 }
 
+func (c *TwitterClient) MarkAsDone(tweet Tweet) error {
+	err := c.db.InsertMention(tweet)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func NewTwitterClient() *TwitterClient {
 
 	auth_tokens := os.Getenv("AUTH_TOKENS")
@@ -274,8 +278,9 @@ func MentionListener(mentionExchanger chan Tweet, twitterClient *TwitterClient) 
 		if err != nil {
 			log.Fatal("Error consiguiendo menciones: ", err.Error())
 		}
+
 		for _, mention := range mentions {
-			fmt.Println("Una mencion al bot -> ", mention.Text)
+			fmt.Println("😋 Got one mention -> " + mention.Text)
 			mentionExchanger <- mention
 		}
 
@@ -289,11 +294,9 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 	for {
 
 		mention := <-mentionExchanger
-		log.Println(" 🌟 Answering to Tweet -> " + mention.Text)
 
 		// Get the tweets in that conversation
 		tweetsToAnalyze, err := twitterClient.GetTweetsByConversationID(mention.ConversationID)
-		fmt.Println(tweetsToAnalyze)
 		if err != nil {
 			log.Fatal("Error when getting the tweets to analyze from twitter in conversaionID -> " + mention.ConversationID)
 			mentionExchanger <- mention
@@ -317,6 +320,13 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 		err = twitterClient.PostResponse(response)
 		if err != nil {
 			log.Fatal("Could not process mention with id " + mention.ID + ": " + err.Error())
+			mentionExchanger <- mention
+			continue
+		}
+
+		err = twitterClient.MarkAsDone(mention)
+		if err != nil {
+			log.Fatal("Error when inserting done mentions " + err.Error())
 			mentionExchanger <- mention
 			continue
 		}
