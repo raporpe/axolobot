@@ -45,7 +45,7 @@
                         "responses": [
                             {
                                 "uuid": "3cbf4a1b-3d8a-40cf-9ba7-48b516e8e625",
-                                "body": "{\r\n    \"meta\": {\r\n        \"result_count\": 0\r\n    }\r\n}",
+                                "body": "{\r\n    \"data\": [\r\n        {\r\n            \"author_id\": \"2391026567\",\r\n            \"id\": \"1489257045081890816\",\r\n            \"text\": \"@TeslaCharging @elonmusk @axolobot\"\r\n        }\r\n    ],\r\n    \"includes\": {\r\n        \"users\": [\r\n            {\r\n                \"id\": \"2391026567\",\r\n                \"name\": \"Raúl P.\",\r\n                \"username\": \"raporpe\"\r\n            }\r\n        ]\r\n    },\r\n    \"meta\": {\r\n        \"oldest_id\": \"1459257045081890816\",\r\n        \"newest_id\": \"1459257045081890816\",\r\n        \"result_count\": 1\r\n    }\r\n}",
                                 "latency": 0,
                                 "statusCode": 200,
                                 "label": "",
