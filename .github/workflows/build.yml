@@ -11,6 +11,12 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@master
+        with:
+          lfs: 'true'
+
+      - name: checkoutLFS
+        uses: actions/checkout@v2
+        run: git lfs pull
 
       - name: Get the version
         id: version
