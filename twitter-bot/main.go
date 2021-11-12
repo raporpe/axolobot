@@ -299,14 +299,12 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 		tweetsToAnalyze, err := twitterClient.GetTweetsByConversationID(mention.ConversationID)
 		if err != nil {
 			log.Fatal("Error when getting the tweets to analyze from twitter in conversaionID -> " + mention.ConversationID)
-			mentionExchanger <- mention
 			continue
 		}
 		// Analyze the tweets using the neural network
 		result, err := AnalyzeTweets(tweetsToAnalyze)
 		if err != nil {
 			log.Fatal("Error when passing the tweets to the neural network: " + err.Error())
-			mentionExchanger <- mention
 			continue
 		}
 
@@ -320,14 +318,12 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 		err = twitterClient.PostResponse(response)
 		if err != nil {
 			log.Fatal("Could not process mention with id " + mention.ID + ": " + err.Error())
-			mentionExchanger <- mention
 			continue
 		}
 
 		err = twitterClient.MarkAsDone(mention)
 		if err != nil {
 			log.Fatal("Error when inserting done mentions " + err.Error())
-			mentionExchanger <- mention
 			continue
 		}
 
@@ -340,6 +336,9 @@ func AnalyzeTweets(tweets []Tweet) (int, error) {
 	averageSentiment := 0
 
 	for _, tweet := range tweets {
+
+		// Delete the '/' that can cause trouble when making queries
+		tweet.Text = strings.Replace(tweet.Text, "/", "", -1)
 		resp, err := http.Get("http://neural-network:8081/v1/sentiment/" + url.PathEscape(tweet.Text))
 		if err != nil {
 			return -1, err
