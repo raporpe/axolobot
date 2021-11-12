@@ -307,7 +307,7 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			continue
 		}
 
-		responseText := "Hi there! The result is " + strconv.Itoa(result)
+		responseText := "Hi there! The average score of all the responses is " + strconv.Itoa(result) + "/100.\nHigh values mean love and low values mean hate."
 
 		response := Tweet{
 			InReplyToID: mention.ID,
@@ -326,5 +326,34 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 }
 
 func AnalyzeTweets(tweets []Tweet) (int, error) {
-	return 0, nil
+
+	averageSentiment := 0
+
+	for _, tweet := range tweets {
+		resp, err := http.Get("http://neural-network:8081/v1/sentiment/" + url.PathEscape(tweet.Text))
+		if err != nil {
+			return -1, err
+		}
+
+		j, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return -1, err
+		}
+		var data map[string]string
+		err = json.Unmarshal(j, &data)
+
+		if err != nil {
+			log.Println("Respuesta incorrecta por parte de neural-network")
+			return -1, err
+		}
+		value, err := strconv.Atoi(data["score"])
+		if err != nil {
+			return -1, err
+		}
+
+		averageSentiment += value
+
+	}
+
+	return averageSentiment / len(tweets), nil
 }
