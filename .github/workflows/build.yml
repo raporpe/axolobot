@@ -16,7 +16,7 @@ jobs:
 
       - name: checkoutLFS
         uses: actions/checkout@v2
-        run: git lfs pull
+      - run: git lfs pull
 
       - name: Get the version
         id: version
