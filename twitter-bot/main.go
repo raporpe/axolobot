@@ -18,6 +18,11 @@ import (
 	"github.com/dghubble/oauth1"
 )
 
+var (
+	ErrorLogger *log.Logger
+	InfoLogger  *log.Logger
+)
+
 type Tweet struct {
 	ConversationID string `json:"conversation_id"`
 	ID             string
@@ -308,7 +313,7 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			continue
 		}
 
-		responseText := "Hi there! The average score of all the responses is " + strconv.Itoa(result) + "/100.\nHigh values mean love and low values mean hate."
+		responseText := "Thanks for calling me! The average sentiment of all the responses is " + strconv.Itoa(result) + "/100.\nHave a nice day!"
 
 		response := Tweet{
 			InReplyToID: mention.ID,
