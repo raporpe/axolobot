@@ -16,7 +16,7 @@ while db == None:
     try:
         db = mysql.connector.connect(host="database",
                                     database="axolobot",
-                                    user="root",
+                                    user= "root",
                                     password=db_password)
     except:
         print("❌ Error when connecting to database, retrying...")

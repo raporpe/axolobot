@@ -1,0 +1,2 @@
+neural-network/model/sentiments.h5 filter=lfs diff=lfs merge=lfs -text
+neural-network/model/tokenizer.pkl filter=lfs diff=lfs merge=lfs -text
