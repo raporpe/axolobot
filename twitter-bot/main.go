@@ -104,7 +104,7 @@ func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 	last_mention := c.db.GetLastMentionID()
 	log.Println("The last mention is -> " + last_mention)
 
-	axolobotUser := 1451497427098275860
+	axolobotUser := "1451497427098275860"
 
 	params := url.Values{}
 	params.Add("max_results", strconv.Itoa(number))
@@ -112,7 +112,7 @@ func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 	params.Add("tweet.fields", "conversation_id")
 	params.Add("expansions", "author_id")
 
-	url := c.hostname + "/2/users/" + strconv.Itoa(axolobotUser) + "/mentions?" + params.Encode()
+	url := c.hostname + "/2/users/" + axolobotUser + "/mentions?" + params.Encode()
 
 	j, err := c.makeRequest("GET", url)
 	if err != nil {
@@ -133,8 +133,7 @@ func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 
 	// Discard the ones in the database and insert the new ones
 	for _, tweet := range tweets {
-
-		if !c.db.IsMentionDone(tweet) {
+		if !c.db.IsMentionDone(tweet) && tweet.UserID != axolobotUser {
 			newTweets = append(newTweets, tweet)
 		}
 	}
