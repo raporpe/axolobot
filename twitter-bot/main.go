@@ -313,12 +313,22 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			continue
 		}
 
-		responseText := "There are no tweets for me to analyse!\nTwitter only lets me read tweets published in the last 7 days."
+		// Different responses depending on the amount of tweets that can be analysed
 
-		if len(tweetsToAnalyze) > 0 && len(tweetsToAnalyze) < 10 {
-			responseText = "Thanks for calling me! The average sentiment of all the responses is " + strconv.Itoa(result) + "/100.\nNote that I could only analyse " + strconv.Itoa(len(tweetsToAnalyze)) + " tweets."
-		} else {
-			responseText = "Thanks for calling me! The average sentiment of all the responses is " + strconv.Itoa(result) + "/100.\nHave a nice day!"
+		var responseText string
+		l := len(tweetsToAnalyze)
+
+		switch {
+		case l == 0:
+			responseText = "There are no tweets for me to analyse!\n" +
+				"Twitter only lets me read tweets published in the last 7 days."
+		case l < 10:
+			responseText = "Thanks for calling me! The average sentiment of all the responses is " +
+				strconv.Itoa(result) + "/100.\n" +
+				"Note that I could only analyse " + strconv.Itoa(len(tweetsToAnalyze)) + " tweets."
+		default:
+			responseText = "Thanks for calling me! The average sentiment of all the responses is " +
+				strconv.Itoa(result) + "/100.\nHave a nice day!"
 		}
 
 		response := Tweet{
