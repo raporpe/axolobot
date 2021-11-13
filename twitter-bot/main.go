@@ -313,7 +313,13 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			continue
 		}
 
-		responseText := "Thanks for calling me! The average sentiment of all the responses is " + strconv.Itoa(result) + "/100.\nHave a nice day!"
+		responseText := "There are no tweets for me to analyse!\nTwitter only lets me read tweets published in the last 7 days."
+
+		if len(tweetsToAnalyze) > 0 && len(tweetsToAnalyze) < 10 {
+			responseText = "Thanks for calling me! The average sentiment of all the responses is " + strconv.Itoa(result) + "/100.\nNote that I could only analyse " + strconv.Itoa(len(tweetsToAnalyze)) + " tweets."
+		} else {
+			responseText = "Thanks for calling me! The average sentiment of all the responses is " + strconv.Itoa(result) + "/100.\nHave a nice day!"
+		}
 
 		response := Tweet{
 			InReplyToID: mention.ID,
@@ -337,6 +343,10 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 }
 
 func AnalyzeTweets(tweets []Tweet) (int, error) {
+
+	if len(tweets) == 0 {
+		return 0, nil
+	}
 
 	averageSentiment := 0
 
