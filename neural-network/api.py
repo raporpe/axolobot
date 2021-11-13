@@ -5,6 +5,7 @@ from flask import jsonify
 import tensorflow as tf
 import pickle
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+import re
 
 app = Flask(__name__)
 
@@ -25,6 +26,9 @@ def decode_sentiment(score, include_neutral=True):
         return "NEGATIVE" if score < 0.5 else "POSITIVE"
 
 def predict(text, include_neutral=True):
+    text = re.sub("((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*", "", text)
+    text = re.sub("@(\w){1,15} ", "", text)
+    
     SEQUENCE_LENGTH = 50
     # Tokenize text
     x_test = pad_sequences(tokenizer.texts_to_sequences([text]), maxlen=SEQUENCE_LENGTH)
