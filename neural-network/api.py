@@ -27,8 +27,8 @@ def decode_sentiment(score, include_neutral=True):
 
 def predict(text, include_neutral=True):
     text = re.sub("((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*", "", text)
-    text = re.sub("@(\w){1,15} ", "", text)
-    
+    text = re.sub("@(\w){1,15}", "", text)
+
     SEQUENCE_LENGTH = 50
     # Tokenize text
     x_test = pad_sequences(tokenizer.texts_to_sequences([text]), maxlen=SEQUENCE_LENGTH)
