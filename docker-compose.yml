@@ -5,6 +5,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
       - "database"
+      - "mockup-api"
   neural-network:
     build: ./neural-network/
     ports:
