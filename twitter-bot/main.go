@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -32,6 +31,8 @@ func main() {
 
 }
 
+// Worker funcion that is constantly pulling mentions from Twitter
+// The found mentions are passed to the mentionExchanger where several instances of MentionWorker are waiting
 func MentionListener(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 
 	for {
@@ -40,11 +41,11 @@ func MentionListener(mentionExchanger chan Tweet, twitterClient *TwitterClient) 
 
 		mentions, err := twitterClient.GetNewMentions(10)
 		if err != nil {
-			log.Fatal("Error consiguiendo menciones: ", err.Error())
+			log.Fatal("Error getting mentions: ", err.Error())
 		}
 
 		for _, mention := range mentions {
-			fmt.Println("😋 Got one mention -> " + mention.Text)
+			log.Println("😋 Got one mention -> " + mention.Text)
 			mentionExchanger <- mention
 		}
 
@@ -53,6 +54,11 @@ func MentionListener(mentionExchanger chan Tweet, twitterClient *TwitterClient) 
 
 }
 
+// Gets the mentions passed by MentionListener trough channel and performs the following steps:
+// 1. Get all the tweets in the same conversation as the mention Tweet
+// 2. Get the sentiment for all the tweets of step 1
+// 3. Post a response with the results of step 2
+// 4. Set the mention as done in the database to avoid doing it twice.
 func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 
 	for {
@@ -66,14 +72,15 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			log.Fatal("Error when getting the tweets to analyze from twitter in conversaionID -> " + mention.ConversationID)
 			continue
 		}
-		// Analyze the tweets using the neural network
+
+		// Analyze the tweets using the neural network api
 		result, err := GetSentimentFromTweets(tweetsToAnalyze)
 		if err != nil {
 			log.Fatal("Error when passing the tweets to the neural network: " + err.Error())
 			continue
 		}
 
-		// Different responses depending on the amount of tweets that can be analyzed
+		// There are different responses depending on the amount of tweets that can be analyzed
 
 		var responseText string
 		l := len(tweetsToAnalyze)
@@ -91,17 +98,20 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 				strconv.Itoa(result) + "/100.\nHave a nice day!"
 		}
 
+		// Make a Tweet struct with the response
 		response := Tweet{
 			InReplyToID: mention.ID,
 			Text:        responseText,
 			UserID:      mention.UserID,
 		}
+
 		err = twitterClient.PostResponse(response)
 		if err != nil {
 			log.Fatal("Could not process mention with id " + mention.ID + ": " + err.Error())
 			continue
 		}
 
+		// Store the Tweet ID of the mention in the database to avoid doing it twice
 		err = twitterClient.SetMentionDone(mention)
 		if err != nil {
 			log.Fatal("Error when inserting done mentions " + err.Error())
@@ -112,12 +122,15 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 
 }
 
+// Helper function that make an instance of the Twitter Client
+// The authentication is managed from this function
 func NewTwitterClient() *TwitterClient {
 
 	auth_tokens := os.Getenv("AUTH_TOKENS")
 	hostname := "https://api.twitter.com"
 
-	// If in development environment, use mock api
+	// If in development environment, the auth token is not set
+	// Then, use the mockup api that is defined in docker-compose
 	if auth_tokens == "" {
 		log.Println("⚒️ Development mode, using mockup api.")
 		return &TwitterClient{
@@ -127,6 +140,8 @@ func NewTwitterClient() *TwitterClient {
 		}
 	}
 
+	// The authentication tokens are in a single environment variable
+	// The 4 secrets are separated with three ":"
 	splitted := strings.Split(auth_tokens, ":")
 	consumerKey := splitted[0]
 	consumerSecret := splitted[1]
@@ -149,6 +164,7 @@ func NewTwitterClient() *TwitterClient {
 
 func GetSentimentFromTweets(tweets []Tweet) (int, error) {
 
+	// If no tweets are passed, return zeros
 	if len(tweets) == 0 {
 		return 0, nil
 	}
@@ -172,7 +188,7 @@ func GetSentimentFromTweets(tweets []Tweet) (int, error) {
 		err = json.Unmarshal(j, &data)
 
 		if err != nil {
-			log.Println("Respuesta incorrecta por parte de neural-network")
+			log.Println("Incorrect response from neural-network")
 			return -1, err
 		}
 		value, err := strconv.Atoi(data["score"])

@@ -14,6 +14,7 @@ type DatabaseManager struct {
 	sess db.Session
 }
 
+// Performs connection with the database
 func NewDatabaseManager() *DatabaseManager {
 	dbPassword := os.Getenv("DB_PASSWORD")
 	settings := mysql.ConnectionURL{
@@ -34,6 +35,7 @@ func NewDatabaseManager() *DatabaseManager {
 
 }
 
+// Checks for existence of Tweet ID in the table Mention of the database
 func (db *DatabaseManager) IsMentionDone(tweet Tweet) bool {
 
 	result, err := db.sess.Collection("mention").Find("mention_id", tweet.ID).Count()
@@ -45,6 +47,7 @@ func (db *DatabaseManager) IsMentionDone(tweet Tweet) bool {
 	return result > 0
 }
 
+// Inserts the Tweet ID in the table Mention of the database
 func (db *DatabaseManager) InsertMention(tweet Tweet) error {
 	toInsert := map[string]string{
 		"mention_id": tweet.ID,
@@ -57,6 +60,7 @@ func (db *DatabaseManager) InsertMention(tweet Tweet) error {
 	return nil
 }
 
+// Gets the most recent TweetID stored in Mention table in the database
 func (db *DatabaseManager) GetLastMentionID() string {
 	var lastMention map[string]string
 	res := db.sess.Collection("mention").Find().OrderBy("-mention_id").Limit(1)

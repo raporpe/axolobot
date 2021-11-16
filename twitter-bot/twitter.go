@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -19,6 +18,7 @@ type Tweet struct {
 	UserID         string `json:"author_id"`
 }
 
+// Response structure from Twitter api v2 endpoint
 type TwitterResponse struct {
 	Tweets []Tweet `json:"data"`
 	Meta   struct {
@@ -40,6 +40,7 @@ type TwitterClient struct {
 	hostname   string
 }
 
+// Makes an authenticated request to any of the Twitter api v1 and v2 endpoints
 func (c *TwitterClient) makeRequest(method string, url string) (string, error) {
 
 	req, err := http.NewRequest(method, url, nil)
@@ -48,6 +49,7 @@ func (c *TwitterClient) makeRequest(method string, url string) (string, error) {
 		return "", err
 	}
 
+	// Execute request. It is authrized by httpClient
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return "", err
@@ -59,22 +61,28 @@ func (c *TwitterClient) makeRequest(method string, url string) (string, error) {
 		return "", err
 	}
 
+	// Return error is the response is different from 200
 	if resp.StatusCode != http.StatusOK {
-		fmt.Println("URL -> " + url)
-		fmt.Println("Response -> " + string(responseData))
-		return "", errors.New("error de autentiación")
+		log.Fatal("URL -> " + url)
+		log.Fatal("Response -> " + string(responseData))
+		return "", fmt.Errorf("The response from %v was not 200: %v", url, string(responseData))
 	}
 
 	return string(responseData), nil
 }
 
+// Pulls the mention timeline from the axolobot twitter username
+// Only returns new mentions.
+// Note: uses api v2
 func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 
 	last_mention := c.db.GetLastMentionID()
 	log.Println("The last mention is -> " + last_mention)
 
+	// The author id of axolobot
 	axolobotUser := "1451497427098275860"
 
+	// Set parameters in the query url that are necessary
 	params := url.Values{}
 	params.Add("max_results", strconv.Itoa(number))
 	params.Add("since_id", last_mention)
@@ -111,6 +119,7 @@ func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 
 }
 
+// Gets up to 100 Tweets given a conversation ID
 func (c *TwitterClient) GetTweetsByConversationID(conversation string) ([]Tweet, error) {
 
 	params := url.Values{}
@@ -139,6 +148,7 @@ func (c *TwitterClient) GetTweetsByConversationID(conversation string) ([]Tweet,
 	return tr.Tweets, nil
 }
 
+// Returns username given userID (or authorID)
 func (c *TwitterClient) GetUsernameByUserID(userID string) (string, error) {
 
 	j, err := c.makeRequest("GET", c.hostname+"/2/users/"+userID)
@@ -157,6 +167,8 @@ func (c *TwitterClient) GetUsernameByUserID(userID string) (string, error) {
 
 }
 
+// Posts a Tweet in response to the given userID and
+// Note: uses api v1.1
 func (c *TwitterClient) PostResponse(tweet Tweet) error {
 
 	username, err := c.GetUsernameByUserID(tweet.UserID)
@@ -170,7 +182,6 @@ func (c *TwitterClient) PostResponse(tweet Tweet) error {
 	params.Add("in_reply_to_status_id", tweet.InReplyToID)
 
 	url := c.hostname + "/1.1/statuses/update.json?" + params.Encode()
-	fmt.Println(url)
 
 	_, err = c.makeRequest("POST", url)
 	if err != nil {
@@ -181,6 +192,8 @@ func (c *TwitterClient) PostResponse(tweet Tweet) error {
 
 }
 
+// Stores in the datbase the Tweet ID of the passed Tweet
+// When pulling new mentions, those with a already registered TweetID will be ignored
 func (c *TwitterClient) SetMentionDone(tweet Tweet) error {
 	err := c.db.InsertMention(tweet)
 	if err != nil {
