@@ -114,7 +114,7 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 				"I could only analyse " + strconv.Itoa(l) + " tweets. \n" +
 				"I can only see Tweets published in the last 7 days and written in English!"
 		default:
-			responseText = welcomeMessages[r0] + "The average sentiment of the responses is " +
+			responseText = welcomeMessages[r0] + "\nThe average sentiment of the responses is " +
 				strconv.Itoa(result) + "/100.\n" +
 				byeMessages[r1]
 		}
