@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 type Tweet struct {
@@ -28,6 +29,7 @@ type TwitterResponse struct {
 	}
 }
 
+// Response structure when looking for username by userID
 type UserLookupResponse struct {
 	Data struct {
 		Username string `json:"username"`
@@ -101,16 +103,26 @@ func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 
 	err = json.Unmarshal([]byte(j), &twitterResponse)
 	if err != nil {
-		log.Println("Error convirtiendo json a struct obteniendo menciones")
+		log.Println("Error when convertion mention list to tweet strucut")
 		return nil, err
 	}
 
 	tweets := twitterResponse.Tweets
-	newTweets := []Tweet{}
+	var newTweets []Tweet
 
-	// Discard the ones in the database and insert the new ones
+	// Check if the mentions shall be processed
 	for _, tweet := range tweets {
-		if !c.db.IsMentionDone(tweet) && tweet.UserID != axolobotUser {
+
+		// To avoid processing twice the same mention
+		mentionNotDone := !c.db.IsMentionDone(tweet)
+
+		// To avoid processing a mention from the own bot and entering a loop
+		mentionNotFromBot := tweet.UserID != axolobotUser
+
+		// To avoid answering to conversations in which the bot is not directly mentioned
+		mentionContainsBotName := strings.Contains(tweet.Text, "axolobot")
+
+		if mentionNotDone && mentionNotFromBot && mentionContainsBotName {
 			newTweets = append(newTweets, tweet)
 		}
 	}
