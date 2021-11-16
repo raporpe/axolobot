@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -75,7 +77,7 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 		}
 
 		// Analyze the tweets using the neural network api
-		result, err := GetSentimentFromTweets(tweetsToAnalyze)
+		results, err := GetSentimentFromTweets(tweetsToAnalyze)
 		if err != nil {
 			log.Fatal("Error when passing the tweets to the neural network: " + err.Error())
 			continue
@@ -83,8 +85,16 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 
 		// There are different responses depending on the amount of tweets that can be analyzed
 
-		var responseText string
-		l := len(tweetsToAnalyze)
+		var negativeTweets int
+		var positiveTweets int
+
+		for _, result := range results {
+			if result > 50 {
+				positiveTweets++
+			} else {
+				negativeTweets++
+			}
+		}
 
 		welcomeMessages := []string{
 			"Hi there! 😊",
@@ -101,22 +111,54 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			"See you soon! 🙃",
 			"Bye bye! 😺",
 		}
-		r0 := rand.Intn(len(welcomeMessages))
-		r1 := rand.Intn(len(byeMessages))
+
+		negativeReaction := []string{
+			"🙀",
+			"😰",
+			"😢",
+			"😿",
+			"😮",
+			"🥴",
+		}
+
+		positiveReaction := []string{
+			"🤙",
+			"😄",
+			"👍",
+			"😁",
+			"😺",
+			"😃",
+		}
+
+		welcomeIndex := rand.Intn(len(welcomeMessages))
+		byeIndex := rand.Intn(len(byeMessages))
+		negativeIndex := rand.Intn(len(negativeReaction))
+		positiveIndex := rand.Intn(len(positiveReaction))
+
+		var responseText string
+		l := len(results)
 
 		switch {
 		case l == 0:
 			responseText = "There are no tweets for me to analyse!\n" +
 				"I can only see Tweets published in the last 7 days and written in English!"
 		case l < 10:
-			responseText = "The average sentiment of the responses is " +
-				strconv.Itoa(result) + "/100.\n" +
+			if negativeTweets >= positiveTweets {
+				responseText = fmt.Sprintf("There are %v negative Tweets out of %v.\n", negativeTweets, l)
+			} else {
+				responseText = fmt.Sprintf("There are %v positive Tweets out of %v.\n", positiveTweets, l)
+			}
+			responseText +=
 				"I could only analyse " + strconv.Itoa(l) + " tweets. \n" +
-				"I can only see Tweets published in the last 7 days and written in English!"
+					"Notice that I can only see Tweets published in the last 7 days and written in English!"
 		default:
-			responseText = welcomeMessages[r0] + "\nThe average sentiment of the responses is " +
-				strconv.Itoa(result) + "/100.\n" +
-				byeMessages[r1]
+			responseText += welcomeMessages[welcomeIndex] + "\n"
+			if negativeTweets >= positiveTweets {
+				responseText += fmt.Sprintf("%v%% of the tweets are negative! %v \n", int((negativeTweets/l)*100), negativeReaction[negativeIndex])
+			} else {
+				responseText += fmt.Sprintf("%v%% of the tweets are positive! %v \n", int((positiveTweets/l)*100), positiveReaction[positiveIndex])
+			}
+			responseText += byeMessages[byeIndex]
 		}
 
 		// Make a Tweet struct with the response
@@ -125,6 +167,8 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			Text:        responseText,
 			UserID:      mention.UserID,
 		}
+
+		log.Println("Response -> " + responseText)
 
 		err = twitterClient.PostResponse(response)
 		if err != nil {
@@ -183,14 +227,14 @@ func NewTwitterClient() *TwitterClient {
 
 }
 
-func GetSentimentFromTweets(tweets []Tweet) (int, error) {
+func GetSentimentFromTweets(tweets []Tweet) ([]int, error) {
 
 	// If no tweets are passed, return zeros
 	if len(tweets) == 0 {
-		return 0, nil
+		return nil, errors.New("No tweets given to analyze")
 	}
 
-	averageSentiment := 0
+	var sentiments []int
 
 	for _, tweet := range tweets {
 
@@ -198,28 +242,28 @@ func GetSentimentFromTweets(tweets []Tweet) (int, error) {
 		tweet.Text = strings.Replace(tweet.Text, "/", "", -1)
 		resp, err := http.Get("http://neural-network:8081/v1/sentiment/" + url.PathEscape(tweet.Text))
 		if err != nil {
-			return -1, err
+			return nil, err
 		}
 
 		j, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return -1, err
+			return nil, err
 		}
 		var data map[string]string
 		err = json.Unmarshal(j, &data)
 
 		if err != nil {
 			log.Println("Incorrect response from neural-network")
-			return -1, err
+			return nil, err
 		}
 		value, err := strconv.Atoi(data["score"])
 		if err != nil {
-			return -1, err
+			return nil, err
 		}
 
-		averageSentiment += value
+		sentiments = append(sentiments, value)
 
 	}
 
-	return averageSentiment / len(tweets), nil
+	return sentiments, nil
 }
