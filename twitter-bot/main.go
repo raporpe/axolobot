@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
@@ -85,17 +86,37 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 		var responseText string
 		l := len(tweetsToAnalyze)
 
+		welcomeMessages := []string{
+			"Hi there! 😊",
+			"So nice to see you! 😉",
+			"Hello!! 🖖",
+			"Hi! 💜 ",
+			"Greetings! 🧐",
+		}
+
+		byeMessages := []string{
+			"Bye! 👋",
+			"Au revoir! 🥖",
+			"Adios! 🤠",
+			"See you soon! 🙃",
+			"Bye bye! 😺",
+		}
+		r0 := rand.Intn(len(welcomeMessages))
+		r1 := rand.Intn(len(byeMessages))
+
 		switch {
 		case l == 0:
 			responseText = "There are no tweets for me to analyse!\n" +
-				"Twitter only lets me read tweets published in the last 7 days."
+				"I can only see Tweets published in the last 7 days and written in English!"
 		case l < 10:
-			responseText = "Thanks for calling me! The average sentiment of all the responses is " +
+			responseText = "The average sentiment of the responses is " +
 				strconv.Itoa(result) + "/100.\n" +
-				"Note that I could only analyse " + strconv.Itoa(len(tweetsToAnalyze)) + " tweets."
+				"I could only analyse " + strconv.Itoa(l) + " tweets. \n" +
+				"I can only see Tweets published in the last 7 days and written in English!"
 		default:
-			responseText = "Thanks for calling me! The average sentiment of all the responses is " +
-				strconv.Itoa(result) + "/100.\nHave a nice day!"
+			responseText = welcomeMessages[r0] + "The average sentiment of the responses is " +
+				strconv.Itoa(result) + "/100.\n" +
+				byeMessages[r1]
 		}
 
 		// Make a Tweet struct with the response
