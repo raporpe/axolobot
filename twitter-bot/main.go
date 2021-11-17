@@ -99,14 +99,14 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 		welcomeMessages := []string{
 			"Hi there! 😊",
 			"So nice to see you! 😉",
-			"Hello!! 🖖",
+			"Hello! 💁",
 			"Hi! 💜 ",
 			"Greetings! 🧐",
 		}
 
 		byeMessages := []string{
 			"Bye! 👋",
-			"Au revoir! 🥖",
+			"Au revoir! 🤙",
 			"Adios! 🤠",
 			"See you soon! 🙃",
 			"Bye bye! 😺",
@@ -229,9 +229,9 @@ func NewTwitterClient() *TwitterClient {
 
 func GetSentimentFromTweets(tweets []Tweet) ([]int, error) {
 
-	// If no tweets are passed, return zeros
+	// If no tweets are passed, resturn zeros
 	if len(tweets) == 0 {
-		return nil, errors.New("No tweets given to analyze")
+		return nil, errors.New("no tweets given to analyze")
 	}
 
 	var sentiments []int
