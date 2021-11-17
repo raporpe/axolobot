@@ -154,9 +154,9 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 		default:
 			responseText += welcomeMessages[welcomeIndex] + "\n"
 			if negativeTweets >= positiveTweets {
-				responseText += fmt.Sprintf("%v%% of the tweets are negative! %v \n", int((negativeTweets/l)*100), negativeReaction[negativeIndex])
+				responseText += fmt.Sprintf("%v%% of the tweets are negative! %v \n", (negativeTweets * 100 / l), negativeReaction[negativeIndex])
 			} else {
-				responseText += fmt.Sprintf("%v%% of the tweets are positive! %v \n", int((positiveTweets/l)*100), positiveReaction[positiveIndex])
+				responseText += fmt.Sprintf("%v%% of the tweets are positive! %v \n", (positiveTweets * 100 / l), positiveReaction[positiveIndex])
 			}
 			responseText += byeMessages[byeIndex]
 		}
