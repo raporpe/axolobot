@@ -79,7 +79,7 @@ function App() {
                     {/* * * This can be a video, image, or just about anything else.*/}
                     {/* * * Set the max width of your media to 100% and the height to*/}
                     {/* * * 100% like the demo example below.*/}
-                    <img source src={phonephoto} style={{maxWidth: '100%', height: '100%'}}/>
+                    <img source src={phonephoto} alt="..." style={{maxWidth: '100%', height: '100%'}}/>
                   </div>
                 </div>
               </div>
@@ -195,7 +195,7 @@ function App() {
             <br />
             Start writing.
           </h2>
-          <a className="btn btn-outline-light py-3 px-4 rounded-pill" href="https://startbootstrap.com/theme/new-age" target="_blank">Download for free</a>
+          <a className="btn btn-outline-light py-3 px-4 rounded-pill" href="https://startbootstrap.com/theme/new-age" target="noreferrer">Download for free</a>
         </div>
       </div>
     </section>
