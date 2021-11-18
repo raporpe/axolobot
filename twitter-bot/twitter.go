@@ -17,6 +17,7 @@ type Tweet struct {
 	Text           string
 	InReplyToID    string `json:"in_reply_to_status_id"`
 	UserID         string `json:"author_id"`
+	Language       string `json:"lang"`
 }
 
 // Response structure from Twitter api v2 endpoint
@@ -88,8 +89,7 @@ func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 	params := url.Values{}
 	params.Add("max_results", strconv.Itoa(number))
 	params.Add("since_id", last_mention)
-	params.Add("tweet.fields", "conversation_id")
-	params.Add("expansions", "author_id")
+	params.Add("tweet.fields", "conversation_id,author_id,lang")
 
 	url := c.hostname + "/2/users/" + axolobotUser + "/mentions?" + params.Encode()
 
@@ -135,7 +135,7 @@ func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 func (c *TwitterClient) GetTweetsByConversationID(conversation string) ([]Tweet, error) {
 
 	params := url.Values{}
-	query := fmt.Sprintf("conversation_id:%v -has:media lang:en", conversation)
+	query := fmt.Sprintf("conversation_id:%v -has:media (lang:en OR lang:es)", conversation)
 	params.Add("query", query)
 	params.Add("tweet.fields", "conversation_id")
 	params.Add("max_results", "100")
