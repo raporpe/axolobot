@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -8,7 +9,6 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -16,6 +16,10 @@ import (
 
 	"github.com/dghubble/oauth1"
 )
+
+const spanish = "es"
+const english = "en"
+const undefined = "und"
 
 func main() {
 
@@ -96,7 +100,7 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			}
 		}
 
-		welcomeMessages := []string{
+		welcomeMessagesEnglish := []string{
 			"Hi there! 😊",
 			"So nice to see you! 😉",
 			"Hello! 💁",
@@ -104,7 +108,7 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			"Greetings! 🧐",
 		}
 
-		byeMessages := []string{
+		byeMessagesEnglish := []string{
 			"Bye! 👋",
 			"Au revoir! 🤙",
 			"Adios! 🤠",
@@ -113,30 +117,26 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 		}
 
 		negativeReaction := []string{
-			"🙀",
-			"😰",
-			"😢",
-			"😿",
-			"😮",
-			"🥴",
+			"🙀", "😰", "😢", "😿", "😮", "🥴", "😱", "😪",
+			"😥", "😨", "😭", "😢", "😲", "😧", "☹️", "🙁",
+			"😦", "😵",
 		}
 
 		positiveReaction := []string{
-			"🤙",
-			"😄",
-			"👍",
-			"😁",
-			"😺",
-			"😃",
+			"🤙", "😄", "👍", "😁", "😺", "😃",
 		}
 
-		welcomeIndex := rand.Intn(len(welcomeMessages))
-		byeIndex := rand.Intn(len(byeMessages))
+		welcomeIndex := rand.Intn(len(welcomeMessagesEnglish))
+		byeIndex := rand.Intn(len(byeMessagesEnglish))
 		negativeIndex := rand.Intn(len(negativeReaction))
 		positiveIndex := rand.Intn(len(positiveReaction))
 
 		var responseText string
 		l := len(results)
+
+		//noTweetsToAnalyze := map[string]string {
+		//	"en": ""
+		//}
 
 		switch {
 		case l == 0:
@@ -152,13 +152,13 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 				"I could only analyse " + strconv.Itoa(l) + " tweets. \n" +
 					"Notice that I can only see Tweets published in the last 7 days and written in English!"
 		default:
-			responseText += welcomeMessages[welcomeIndex] + "\n"
+			responseText += welcomeMessagesEnglish[welcomeIndex] + "\n"
 			if negativeTweets >= positiveTweets {
 				responseText += fmt.Sprintf("%v%% of the tweets are negative! %v \n", (negativeTweets * 100 / l), negativeReaction[negativeIndex])
 			} else {
 				responseText += fmt.Sprintf("%v%% of the tweets are positive! %v \n", (positiveTweets * 100 / l), positiveReaction[positiveIndex])
 			}
-			responseText += byeMessages[byeIndex]
+			responseText += byeMessagesEnglish[byeIndex]
 		}
 
 		// Make a Tweet struct with the response
@@ -240,7 +240,14 @@ func GetSentimentFromTweets(tweets []Tweet) ([]int, error) {
 
 		// Delete the '/' that can cause trouble when making queries
 		tweet.Text = strings.Replace(tweet.Text, "/", "", -1)
-		resp, err := http.Get("http://neural-network:8081/v1/sentiment/" + url.PathEscape(tweet.Text))
+
+		url := "http://neural-network:8081/v1/sentiment/" + tweet.Language
+
+		client := &http.Client{}
+		req, _ := http.NewRequest("GET", url, nil)
+		req.Header.Set("sentiment", base64.StdEncoding.EncodeToString([]byte(tweet.Text)))
+
+		resp, err := client.Do(req)
 		if err != nil {
 			return nil, err
 		}
