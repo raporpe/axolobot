@@ -1,6 +1,6 @@
 [build]
   base = "website/"
-  publish = "website/public/"
+  publish = "build/"
   command = "npm run build"
 
 
