@@ -6,6 +6,7 @@ import tensorflow as tf
 import pickle
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import re
+from googletrans import Translator
 
 app = Flask(__name__)
 
@@ -40,13 +41,24 @@ def predict(text, include_neutral=True):
     return {"sentiment": label, "score": str(int(score[0]*100))} 
 
 
-@ app.route("/v1/sentiment/<sentiment>", methods=["GET"])
+@ app.route("/v1/sentiment/english/<sentiment>", methods=["GET"])
 def get_sentiment(sentiment):
     #prediction = model.predict([s])
     response = predict(sentiment)
     # for i in range(len(classes)):
     #    response.append({classes[i]: prediction[0][i]})
     return jsonify(response)
+
+@ app.route("/v1/sentiment/spanish/<sentiment>", methods=["GET"])
+def get_sentiment(sentiment):
+    translator = Translator()
+    result = translator.translate('sentiment',src="es", dest="en")
+    #prediction = model.predict([s])
+    response = predict(result.text)
+    # for i in range(len(classes)):
+    #    response.append({classes[i]: prediction[0][i]})
+    return jsonify(response)
+
 
 
 if __name__ == "__main__":
