@@ -35,12 +35,15 @@ function App() {
             <li className="nav-item"><a className="nav-link me-lg-3" href="#features">How To Use</a></li>
             <li className="nav-item"><a className="nav-link me-lg-3" href="#download">The Team</a></li>
           </ul>
+          <a href="https://twitter.com/axolobot"> 
+
           <button className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
             <span className="d-flex align-items-center">
               <i className="bi-lightning-fill me-2" />
               <span className="small">Try Now</span>
             </span>
           </button>
+          </a>
         </div>
       </div>
     </nav>
@@ -186,39 +189,17 @@ function App() {
         </div>
       </div>
     </section>
-    {/* Call to action section*/}
-    <section className="cta">
-      <div className="cta-content">
-        <div className="container px-5">
-          <h2 className="text-white display-1 lh-1 mb-4">
-            Stop reading.
-            <br />
-            Start writing.
-          </h2>
-          <a className="btn btn-outline-light py-3 px-4 rounded-pill" href="https://startbootstrap.com/theme/new-age" target="noreferrer">Download for free</a>
-        </div>
-      </div>
-    </section>
     {/* App badge section*/}
     <section className="bg-gradient-primary-to-secondary" id="download">
       <div className="container px-5">
-        <h2 className="text-center text-white font-alt mb-4">Get the app now!</h2>
-        <div className="d-flex flex-column flex-lg-row align-items-center justify-content-center">
-          <a className="me-lg-3 mb-4 mb-lg-0" href="#!"><img className="app-badge" src="assets/img/google-play-badge.svg" alt="..." /></a>
-          <a href="#!"><img className="app-badge" src="assets/img/app-store-badge.svg" alt="..." /></a>
-        </div>
+        <h2 className="text-center text-white font-alt mb-4">Try Axolobot now!</h2>
       </div>
     </section>
     {/* Footer*/}
     <footer className="bg-black text-center py-5">
       <div className="container px-5">
         <div className="text-white-50 small">
-          <div className="mb-2">© Your Website 2021. All Rights Reserved.</div>
-          <a href="#!">Privacy</a>
-          <span className="mx-1">·</span>
-          <a href="#!">Terms</a>
-          <span className="mx-1">·</span>
-          <a href="#!">FAQ</a>
+          <div className="mb-2">© Axolobot 2021</div>
         </div>
       </div>
     </footer>
@@ -226,10 +207,10 @@ function App() {
     <div className="modal fade" id="feedbackModal" tabIndex={-1} aria-labelledby="feedbackModalLabel" aria-hidden="true">
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
-          <div className="modal-header bg-gradient-primary-to-secondary p-4">
-            <h5 className="modal-title font-alt text-white" id="feedbackModalLabel">Try Now</h5>
-            <button className="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close" />
-          </div>
+            <div className="modal-header bg-gradient-primary-to-secondary p-4">
+              <h5 className="modal-title font-alt text-white" id="feedbackModalLabel">Try Now</h5>
+              <button className="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close" />
+            </div>
           <div className="modal-body border-0 p-4">
             {/* * * * * * * * * * * * * * * **/}
             {/* * * SB Forms Contact Form * **/}
