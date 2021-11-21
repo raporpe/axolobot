@@ -137,9 +137,8 @@ func (c *TwitterClient) GetTweetsByConversationID(conversation string) ([]Tweet,
 	params := url.Values{}
 	query := fmt.Sprintf("conversation_id:%v -has:media (lang:en OR lang:es)", conversation)
 	params.Add("query", query)
-	params.Add("tweet.fields", "conversation_id")
+	params.Add("tweet.fields", "conversation_id,author_id,lang")
 	params.Add("max_results", "100")
-	params.Add("expansions", "author_id")
 
 	url := c.hostname + "/2/tweets/search/recent?" + params.Encode()
 
