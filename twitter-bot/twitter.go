@@ -66,8 +66,8 @@ func (c *TwitterClient) makeRequest(method string, url string) (string, error) {
 
 	// Return error is the response is different from 200
 	if resp.StatusCode != http.StatusOK {
-		log.Fatal("URL -> " + url)
-		log.Fatal("Response -> " + string(responseData))
+		log.Println("URL -> " + url)
+		log.Println("Response -> " + string(responseData))
 		return "", fmt.Errorf("The response from %v was not 200: %v", url, string(responseData))
 	}
 
@@ -145,7 +145,7 @@ func (c *TwitterClient) GetTweetsByConversationID(conversation string) ([]Tweet,
 
 	j, err := c.makeRequest("GET", url)
 	if err != nil {
-		log.Fatal("Error when retrieving tweets by conversation id")
+		log.Println("Error when retrieving tweets by conversation id")
 		return nil, err
 	}
 
@@ -197,7 +197,7 @@ func (c *TwitterClient) PostResponse(tweet Tweet) error {
 
 	_, err = c.makeRequest("POST", url)
 	if err != nil {
-		log.Fatal("Error when publishing tweet: " + err.Error())
+		log.Println("Error when publishing tweet: " + err.Error())
 	}
 
 	return nil

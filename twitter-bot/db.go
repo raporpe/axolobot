@@ -27,7 +27,7 @@ func NewDatabaseManager() *DatabaseManager {
 	time.Sleep(5 * time.Second)
 	session, err := mysql.Open(settings)
 	for err != nil {
-		log.Fatal("Cannot open database connection. Retrying...")
+		log.Println("Cannot open database connection. Retrying...")
 		session, err = mysql.Open(settings)
 	}
 	log.Println("Connected to the database")
@@ -66,7 +66,7 @@ func (db *DatabaseManager) GetLastMentionID() string {
 	res := db.sess.Collection("mention").Find().OrderBy("-mention_id").Limit(1)
 	err := res.One(&lastMention)
 	if err != nil {
-		log.Fatal("There was an error getting mentions in database: " + err.Error())
+		log.Println("There was an error getting mentions in database: " + err.Error())
 		return "1"
 	}
 	fmt.Println(lastMention)

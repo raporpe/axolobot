@@ -17,9 +17,9 @@ import (
 	"github.com/dghubble/oauth1"
 )
 
-const spanish = "es"
-const english = "en"
-const undefined = "und"
+const spanishLang = "es"
+const englishLang = "en"
+const undefinedLang = "und"
 
 func main() {
 
@@ -34,6 +34,7 @@ func main() {
 		go MentionWorker(mentionExchanger, twitterClient)
 	}
 
+	// Sleep for ever
 	select {}
 
 }
@@ -48,7 +49,7 @@ func MentionListener(mentionExchanger chan Tweet, twitterClient *TwitterClient) 
 
 		mentions, err := twitterClient.GetNewMentions(10)
 		if err != nil {
-			log.Fatal("Error getting mentions: ", err.Error())
+			log.Println("Error getting mentions: ", err.Error())
 		}
 
 		for _, mention := range mentions {
@@ -73,17 +74,24 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 		// Get the mentions that have to be processed
 		mention := <-mentionExchanger
 
+		// If the mention contains no text or the mention is in a language different from english or spanish,
+		// set the language to english
+		if mention.Language == undefinedLang ||
+			(mention.Language != spanishLang && mention.Language != englishLang) {
+			mention.Language = englishLang
+		}
+
 		// Get the tweets in the same conversation as the mention
 		tweetsToAnalyze, err := twitterClient.GetTweetsByConversationID(mention.ConversationID)
 		if err != nil {
-			log.Fatal("Error when getting the tweets to analyze from twitter in conversaionID -> " + mention.ConversationID)
+			log.Println("Error when getting the tweets to analyze from twitter in conversaionID -> " + mention.ConversationID)
 			continue
 		}
 
 		// Analyze the tweets using the neural network api
 		results, err := GetSentimentFromTweets(tweetsToAnalyze)
 		if err != nil {
-			log.Fatal("Error when passing the tweets to the neural network: " + err.Error())
+			log.Println("Error when passing the tweets to the neural network: " + err.Error())
 			continue
 		}
 
@@ -100,20 +108,38 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			}
 		}
 
-		welcomeMessagesEnglish := []string{
-			"Hi there! 😊",
-			"So nice to see you! 😉",
-			"Hello! 💁",
-			"Hi! 💜 ",
-			"Greetings! 🧐",
+		welcomeMessages := map[string][]string{
+			englishLang: {
+				"Hi there! 😊",
+				"So nice to see you! 😉",
+				"Hello! 💁",
+				"Hi! 💜 ",
+				"Greetings! 🧐",
+			},
+			spanishLang: {
+				"¡Holaaa! 😊",
+				"¡Me alegro de verte! 😉",
+				"¡Hola! 💁",
+				"¡Aquí estoy! 💜 ",
+				"¡Listo para analizar! 🧐",
+			},
 		}
 
-		byeMessagesEnglish := []string{
-			"Bye! 👋",
-			"Au revoir! 🤙",
-			"Adios! 🤠",
-			"See you soon! 🙃",
-			"Bye bye! 😺",
+		byeMessages := map[string][]string{
+			englishLang: {
+				"Bye! 👋",
+				"Au revoir! 🤙",
+				"Adios! 🤠",
+				"See you soon! 🙃",
+				"Bye bye! 😺",
+			},
+			spanishLang: {
+				"Bye! 👋",
+				"Au revoir! 🤙",
+				"Adios! 🤠",
+				"See you soon! 🙃",
+				"Bye bye! 😺",
+			},
 		}
 
 		negativeReaction := []string{
@@ -126,39 +152,89 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			"🤙", "😄", "👍", "😁", "😺", "😃",
 		}
 
-		welcomeIndex := rand.Intn(len(welcomeMessagesEnglish))
-		byeIndex := rand.Intn(len(byeMessagesEnglish))
+		// Generate random indexes for all the messages
+		welcomeIndex := rand.Intn(len(welcomeMessages[englishLang]))
+		byeIndex := rand.Intn(len(byeMessages[englishLang]))
 		negativeIndex := rand.Intn(len(negativeReaction))
 		positiveIndex := rand.Intn(len(positiveReaction))
 
 		var responseText string
 		l := len(results)
+		lang := mention.Language
 
-		//noTweetsToAnalyze := map[string]string {
-		//	"en": ""
-		//}
+		// The response will be in the same language as the mention or in english as default
+
+		responseNoTweets := map[string]string{
+
+			englishLang: "There are no tweets for me to analyse! " + negativeReaction[negativeIndex] + "\n" +
+				"I can only see Tweets posted in the last 7 days!\n" +
+				"Anyway, thank you for calling me " + negativeReaction[negativeIndex],
+
+			spanishLang: "¡No he podido analizar ningún tweet! " + negativeReaction[negativeIndex] + "\n" +
+				"Recuerda que solo puedo ver tweets publicados en los últimos 7 días.\n" +
+				"Muchas gracias por llamarme de todas formas " + positiveReaction[positiveIndex],
+		}
+
+		responseFewTweetsPositive := map[string]string{
+			englishLang: "There are %v positive Tweets out of %v.\n",
+			spanishLang: "Hay %v tweets positivos de un total de %v.\n",
+		}
+
+		responseFewTweetsNegative := map[string]string{
+			englishLang: "There are %v negative Tweets out of %v.\n",
+			spanishLang: "Hay %v tweets negativos de un total de %v.\n",
+		}
+
+		responseFewTweetsExtra := map[string]string{
+			englishLang: "I could only analyse %v tweets. \n" +
+				"Notice that I can only see tweets posted in the last 7 days!",
+			spanishLang: "Solo pude analizar %v tweets. \n" +
+				"Recuerda que solo puedo analizar tweets publicados en los últimos 7 días.",
+		}
+
+		responseGeneralNegative := map[string]string{
+			englishLang: "%v%% of the tweets are negative! %v \n",
+			spanishLang: "¡El %v%% de los tweets son negativos! %v \n",
+		}
+
+		responseGeneralPositive := map[string]string{
+			englishLang: "%v%% of the tweets are positive! %v \n",
+			spanishLang: "¡El %v%% de los tweets son positivos! %v \n",
+		}
 
 		switch {
+
+		// When there is not a single tweet that can be analyzed
 		case l == 0:
-			responseText = "There are no tweets for me to analyse!\n" +
-				"I can only see Tweets published in the last 7 days and written in English!"
+			responseText = responseNoTweets[lang]
+
+		// When there are only a few tweets (less than 10)
 		case l < 10:
+			// Most of them are negative
 			if negativeTweets >= positiveTweets {
-				responseText = fmt.Sprintf("There are %v negative Tweets out of %v.\n", negativeTweets, l)
+				responseText = fmt.Sprintf(responseFewTweetsNegative[lang], negativeTweets, l)
+
 			} else {
-				responseText = fmt.Sprintf("There are %v positive Tweets out of %v.\n", positiveTweets, l)
+				// Most of them are positive
+				responseText = fmt.Sprintf(responseFewTweetsPositive[lang], positiveTweets, l)
 			}
-			responseText +=
-				"I could only analyse " + strconv.Itoa(l) + " tweets. \n" +
-					"Notice that I can only see Tweets published in the last 7 days and written in English!"
+			responseText += fmt.Sprintf(responseFewTweetsExtra[lang], l)
+
 		default:
-			responseText += welcomeMessagesEnglish[welcomeIndex] + "\n"
+			// General response: enough tweets to analyze
+			// Welcome text
+			responseText += welcomeMessages[lang][welcomeIndex] + "\n"
+
+			// Most tweets negative
 			if negativeTweets >= positiveTweets {
-				responseText += fmt.Sprintf("%v%% of the tweets are negative! %v \n", (negativeTweets * 100 / l), negativeReaction[negativeIndex])
+				responseText += fmt.Sprintf(responseGeneralNegative[lang], (negativeTweets * 100 / l), negativeReaction[negativeIndex])
+
 			} else {
-				responseText += fmt.Sprintf("%v%% of the tweets are positive! %v \n", (positiveTweets * 100 / l), positiveReaction[positiveIndex])
+				// Most tweets positive
+				responseText += fmt.Sprintf(responseGeneralPositive[lang], (positiveTweets * 100 / l), positiveReaction[positiveIndex])
 			}
-			responseText += byeMessagesEnglish[byeIndex]
+			// Add the farewell message
+			responseText += byeMessages[lang][byeIndex]
 		}
 
 		// Make a Tweet struct with the response
@@ -172,14 +248,14 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 
 		err = twitterClient.PostResponse(response)
 		if err != nil {
-			log.Fatal("Could not process mention with id " + mention.ID + ": " + err.Error())
+			log.Println("Could not process mention with id " + mention.ID + ": " + err.Error())
 			continue
 		}
 
 		// Store the Tweet ID of the mention in the database to avoid doing it twice
 		err = twitterClient.SetMentionDone(mention)
 		if err != nil {
-			log.Fatal("Error when inserting done mentions " + err.Error())
+			log.Println("Error when inserting done mentions " + err.Error())
 			continue
 		}
 
