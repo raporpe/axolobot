@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -304,11 +303,6 @@ func NewTwitterClient() *TwitterClient {
 }
 
 func GetSentimentFromTweets(tweets []Tweet) ([]int, error) {
-
-	// If no tweets are passed, resturn zeros
-	if len(tweets) == 0 {
-		return nil, errors.New("no tweets given to analyze")
-	}
 
 	var sentiments []int
 
