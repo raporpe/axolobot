@@ -6,7 +6,6 @@ import tensorflow as tf
 import pickle
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import re
-from googletrans import Translator
 import base64
 
 app = Flask(__name__)
@@ -44,24 +43,20 @@ def predict(text, include_neutral=True):
 
 @ app.route("/v1/sentiment/en", methods=["GET"])
 def get_sentiment_en():
-    #prediction = model.predict([s])
-    sentiment = base64.b64decode(request.headers.get("sentiment"))
+    sentiment = base64.b64decode(request.headers.get("sentiment")).decode('utf-8')
     print(sentiment)
+
     response = predict(sentiment)
-    # for i in range(len(classes)):
-    #    response.append({classes[i]: prediction[0][i]})
+
     return jsonify(response)
 
 @ app.route("/v1/sentiment/es", methods=["GET"])
 def get_sentiment_es():
-    translator = Translator()
-    sentiment = base64.b64decode(request.headers.get("sentiment"))
+    sentiment = base64.b64decode(request.headers.get("sentiment")).decode('utf-8')
     print(sentiment)
-    result = translator.translate(sentiment, src="es", dest="en")
-    #prediction = model.predict([s])
-    response = predict(result.text)
-    # for i in range(len(classes)):
-    #    response.append({classes[i]: prediction[0][i]})
+
+    response = predict(sentiment)
+
     return jsonify(response)
 
 
