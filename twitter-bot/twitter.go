@@ -68,7 +68,7 @@ func (c *TwitterClient) makeRequest(method string, url string) (string, error) {
 	if resp.StatusCode != http.StatusOK {
 		log.Println("URL -> " + url)
 		log.Println("Response -> " + string(responseData))
-		return "", fmt.Errorf("The response from %v was not 200: %v", url, string(responseData))
+		return "", fmt.Errorf("the response from %v was not 200: %v", url, string(responseData))
 	}
 
 	return string(responseData), nil
