@@ -139,6 +139,31 @@
                         "enabled": true,
                         "randomResponse": false,
                         "sequentialResponse": true
+                    },
+                    {
+                        "uuid": "4c7ef696-e7c5-4ecd-9477-b741aa42dee6",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "2/tweets/*",
+                        "responses": [
+                            {
+                                "uuid": "7896f8c1-030e-4424-8f39-9230803ece5e",
+                                "body": "{\r\n    \"data\": {\r\n        \"text\": \"@SilvermanJacob @axolobot analiza\",\r\n        \"id\": \"1457758565322657801\",\r\n        \"conversation_id\": \"1455023287503933446\",\r\n        \"lang\": \"es\",\r\n        \"author_id\": \"1106530497482625024\"\r\n    }\r\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false,
+                                "fallbackTo404": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
                     }
                 ],
                 "proxyMode": false,

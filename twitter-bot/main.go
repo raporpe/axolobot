@@ -72,12 +72,22 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 
 		// Get the mentions that have to be processed
 		mention := <-mentionExchanger
+		lang := mention.Language
 
 		// If the mention contains no text or the mention is in a language different from english or spanish,
 		// set the language to english
-		if mention.Language == undefinedLang ||
-			(mention.Language != spanishLang && mention.Language != englishLang) {
-			mention.Language = englishLang
+		if lang == undefinedLang ||
+			(lang != spanishLang && lang != englishLang) {
+			tweet, err := twitterClient.GetTweetByID(mention.ConversationID)
+
+			if err != nil {
+				lang = englishLang
+			} else if tweet.Language == englishLang || tweet.Language == spanishLang {
+				lang = tweet.Language
+			} else {
+				lang = englishLang
+			}
+
 		}
 
 		// Get the tweets in the same conversation as the mention
@@ -159,7 +169,6 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 
 		var responseText string
 		l := len(results)
-		lang := mention.Language
 
 		// The response will be in the same language as the mention or in english as default
 

@@ -178,6 +178,25 @@ func (c *TwitterClient) GetUsernameByUserID(userID string) (string, error) {
 
 }
 
+func (c *TwitterClient) GetTweetByID(tweetID string) (Tweet, error) {
+
+	params := url.Values{}
+	params.Add("tweet.fields", "conversation_id,author_id,lang")
+
+	url := c.hostname + "/2/tweets/" + tweetID + "?" + params.Encode()
+
+	j, err := c.makeRequest("GET", url)
+
+	var data map[string]Tweet
+	json.Unmarshal([]byte(j), &data)
+	if err != nil {
+		log.Println("Error en la respuesta al extraer username por userID")
+		return Tweet{}, err
+	}
+
+	return data["data"], nil
+}
+
 // Posts a Tweet in response to the given userID and
 // Note: uses api v1.1
 func (c *TwitterClient) PostResponse(tweet Tweet) error {
