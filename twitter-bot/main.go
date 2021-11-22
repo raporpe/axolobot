@@ -241,7 +241,7 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			positivePercentage := positiveTweets * 100 / l
 
 			// If the percentages are very close
-			if negativePercentage >= 45 && negativePercentage <= 55 {
+			if negativePercentage >= 47 && negativePercentage <= 53 {
 				responseText += fmt.Sprintf(responseGeneralNeutral[lang])
 
 				// Most tweets negative
