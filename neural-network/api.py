@@ -11,16 +11,28 @@ import base64
 app = Flask(__name__)
 
 # Load the model and tokenizer for english version
-model = tf.keras.models.load_model("./model/sentiments.h5")
-with open("./model/tokenizer.pkl", 'rb') as handle:
-    tokenizer = pickle.load(handle)
+model_en = tf.keras.models.load_model("./model/sentiments_en.h5")
+with open("./model/tokenizer_en.pkl", 'rb') as handle_en:
+    tokenizer_en = pickle.load(handle_en)
+
+# Load the model and tokenizer for spanish version
+model_es = tf.keras.models.load_model("./model/sentiments_es.h5")
+with open("./model/tokenizer_es.pkl", 'rb') as handle_es:
+    tokenizer_es = pickle.load(handle_es)
 
 
 # Uses the model to predict the sentiment
-def predict(text):
+def predict(text, lang="en"):
     # Clean text from url's and tags
     text = re.sub("((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*", "", text)
     text = re.sub("@(\w){1,15}", "", text)
+
+    # Select the language of the model
+    model = model_en
+    tokenizer = tokenizer_en
+    if lang == "es":
+        model = model_es
+        tokenizer = tokenizer_es
 
     # Padding for the neural network
     SEQUENCE_LENGTH = 50
