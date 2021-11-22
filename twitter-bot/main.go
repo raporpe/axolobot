@@ -200,6 +200,11 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 				"Recuerda que solo puedo analizar tweets publicados en los últimos 7 días.",
 		}
 
+		responseGeneralNeutral := map[string]string{
+			englishLang: "Neither good nor bad! The responses are quite balanced! 😶 \n",
+			spanishLang: "¡Ni fu ni fa! Las respuestas están muy equilibradas 😶 \n",
+		}
+
 		responseGeneralNegative := map[string]string{
 			englishLang: "%v%% of the tweets are negative! %v \n",
 			spanishLang: "¡El %v%% de los tweets son negativos! %v \n",
@@ -232,14 +237,20 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			// General response: enough tweets to analyze
 			// Welcome text
 			responseText += welcomeMessages[lang][welcomeIndex] + "\n"
+			negativePercentage := negativeTweets * 100 / l
+			positivePercentage := positiveTweets * 100 / l
 
-			// Most tweets negative
-			if negativeTweets >= positiveTweets {
-				responseText += fmt.Sprintf(responseGeneralNegative[lang], (negativeTweets * 100 / l), negativeReaction[negativeIndex])
+			// If the percentages are very close
+			if negativePercentage >= 45 || negativePercentage <= 55 {
+				responseText += fmt.Sprintf(responseGeneralNeutral[lang])
+
+				// Most tweets negative
+			} else if negativeTweets >= positiveTweets {
+				responseText += fmt.Sprintf(responseGeneralNegative[lang], negativePercentage, negativeReaction[negativeIndex])
 
 			} else {
 				// Most tweets positive
-				responseText += fmt.Sprintf(responseGeneralPositive[lang], (positiveTweets * 100 / l), positiveReaction[positiveIndex])
+				responseText += fmt.Sprintf(responseGeneralPositive[lang], positivePercentage, positiveReaction[positiveIndex])
 			}
 			// Add the farewell message
 			responseText += byeMessages[lang][byeIndex]
