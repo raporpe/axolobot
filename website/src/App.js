@@ -177,7 +177,7 @@ function App() {
           <div className="col-12 col-lg-5">
             <h2 className="display-4 lh-1 mb-4">It is great. <br/> Its team, too.</h2>
             <p className="lead fw-normal text-muted mb-5 mb-lg-0">Three great students willing to use AI in a helpful way for everyone ended up creating AxoloBot. Check them out! <br/><br/>
-            <a href="https://twitter.com/axolobot"> 
+            <a href="https://www.linkedin.com/in/raul-portugues/"> 
               <button className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
               <span className="d-flex align-items-center">
               <i className="bi-linkedin me-2" />
@@ -186,7 +186,7 @@ function App() {
           </button>
           </a>
           <br/>
-          <a href="https://twitter.com/axolobot"> 
+          <a href="https://www.linkedin.com/in/diegogarciaperez/"> 
               <button className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
               <span className="d-flex align-items-center">
               <i className="bi-linkedin me-2" />
@@ -195,7 +195,7 @@ function App() {
           </button>
           </a>
           <br/>
-          <a href="https://twitter.com/axolobot"> 
+          <a href="https://www.linkedin.com/in/jorge-lizcano/"> 
               <button className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
               <span className="d-flex align-items-center">
               <i className="bi-linkedin me-2" />
