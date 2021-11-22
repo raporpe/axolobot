@@ -2,6 +2,8 @@ import logo from './logo.png';
 import twitterlogo from './twitter-logo.png'
 import './App.css';
 import phonephoto from './background-phone.png';
+import explanation from './explanation.png';
+import team from './team.png';
 
 function App() {
   return (
@@ -11,7 +13,7 @@ function App() {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content />
     <meta name="author" content />
-    <title>Axolobot ✨</title>
+    <title>AxoloBot ✨</title>
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     {/* Bootstrap icons*/}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
@@ -25,18 +27,16 @@ function App() {
     {/* Navigation*/}
     <nav className="navbar navbar-expand-lg navbar-light fixed-top shadow-sm" id="mainNav">
       <div className="container px-5">
-        <a className="navbar-brand fw-bold" href="#page-top"><img src={logo} alt="..." style={{height: '3rem'}} /> Axolobot</a>
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-          Menu
-          <i className="bi-list" />
-        </button>
+        <a className="navbar-brand fw-bold" href="#page-top"><img src={logo} alt="..." style={{height: '3rem'}} /> AxoloBot</a>
+        
         <div className="collapse navbar-collapse" id="navbarResponsive">
           <ul className="navbar-nav ms-auto me-4 my-3 my-lg-0">
             <li className="nav-item"><a className="nav-link me-lg-3" href="#features">How To Use</a></li>
-            <li className="nav-item"><a className="nav-link me-lg-3" href="#download">The Team</a></li>
+            <li className="nav-item"><a className="nav-link me-lg-3" href="#team">The Team</a></li>
           </ul>
-          <a href="https://twitter.com/axolobot"> 
-
+         
+        </div>
+        <a href="https://twitter.com/axolobot"> 
           <button className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
             <span className="d-flex align-items-center">
               <i className="bi-lightning-fill me-2" />
@@ -44,7 +44,6 @@ function App() {
             </span>
           </button>
           </a>
-        </div>
       </div>
     </nav>
     {/* Mashead header*/}
@@ -55,7 +54,7 @@ function App() {
             {/* Mashead text and app badges*/}
             <div className="mb-5 mb-lg-0 text-center text-lg-start">
               <h1 className="display-1 lh-1 mb-3">Discover what they think.</h1>
-              <p className="lead fw-normal text-muted mb-5">Axolobot is your perfect companion, it uses powerful AI techniques to know a tweet's reaction in few seconds.</p>
+              <p className="lead fw-normal text-muted mb-5">AxoloBot is your perfect companion, it uses powerful AI techniques to know a tweet's reaction in few seconds. <br/>How? It gathers and analyse responses!</p>
               {/*<div className="d-flex flex-column flex-lg-row align-items-center">
                 <a className="me-lg-3 mb-4 mb-lg-0" href="#!"><img className="app-badge" src="assets/img/google-play-badge.svg" alt="..." /></a>
                 <a href="#!"><img className="app-badge" src="assets/img/app-store-badge.svg" alt="..." /></a>
@@ -78,10 +77,6 @@ function App() {
               <div className="device-wrapper">
                 <div className="device" data-device="iPhoneX" data-orientation="portrait" data-color="black">
                   <div className="screen bg-black">
-                    {/* PUT CONTENTS HERE:*/}
-                    {/* * * This can be a video, image, or just about anything else.*/}
-                    {/* * * Set the max width of your media to 100% and the height to*/}
-                    {/* * * 100% like the demo example below.*/}
                     <img source src={phonephoto} alt="..." style={{maxWidth: '100%', height: '100%'}}/>
                   </div>
                 </div>
@@ -114,7 +109,7 @@ function App() {
                   <div className="text-center">
                     <i className="bi-search icon-feature text-gradient d-block mb-3" />
                     <h3 className="font-alt">1. Look for the tweet</h3>
-                    <p className="text-muted mb-0">There are plenty of tweets,<br/> should not be a problem.</p>
+                    <p className="text-muted mb-0">The tweet must be not older than 7 days and written in English or Spanish.</p>
                   </div>
                 </div>
                 <div className="col-md-6 mb-5">
@@ -122,7 +117,7 @@ function App() {
                   <div className="text-center">
                     <i className="bi-chat-square-quote-fill icon-feature text-gradient d-block mb-3" />
                     <h3 className="font-alt">2. Mention @axolobot</h3>
-                    <p className="text-muted mb-0">Write a comment to the tweet<br/> mentioning the coolest bot of all.</p>
+                    <p className="text-muted mb-0">Write a comment to the tweet mentioning the coolest bot of all.</p>
                   </div>
                 </div>
               </div>
@@ -132,7 +127,7 @@ function App() {
                   <div className="text-center">
                     <i className="bi-sun-fill icon-feature text-gradient d-block mb-3" />
                     <h3 className="font-alt">3. Watch the analysis</h3>
-                    <p className="text-muted mb-0">Axolobot will answer you with<br/> the average generated feeling.</p>
+                    <p className="text-muted mb-0">AxoloBot will answer you with the average generated feeling.</p>
                   </div>
                 </div>
                 <div className="col-md-6">
@@ -140,7 +135,7 @@ function App() {
                   <div className="text-center">
                     <i className="bi-heart-fill icon-feature text-gradient d-block mb-3" />
                     <h3 className="font-alt">4. Share the knowledge</h3>
-                    <p className="text-muted mb-0">Axolobot can help others,<br/> do not keep it as a secret!</p>
+                    <p className="text-muted mb-0">AxoloBot can help others,<br/> do not keep it as a secret!</p>
                   </div>
                 </div>
               </div>
@@ -166,7 +161,7 @@ function App() {
                     {/* * * This can be a video, image, or just about anything else.*/}
                     {/* * * Set the max width of your media to 100% and the height to*/}
                     {/* * * 100% like the demo example below.*/}
-                    <video muted="muted" autoPlay loop style={{maxWidth: '100%', height: '100%'}}><source src="assets/img/demo-screen.mp4" type="video/mp4" /></video>
+                    <img source src={explanation} alt="..." style={{maxWidth: '100%', height: '100%'}}/>
                   </div>
                 </div>
               </div>
@@ -177,29 +172,61 @@ function App() {
     </section>
     {/* Basic features section*/}
     <section className="bg-light">
-      <div className="container px-5">
+      <div className="container px-5"  id="team">
         <div className="row gx-5 align-items-center justify-content-center justify-content-lg-between">
           <div className="col-12 col-lg-5">
             <h2 className="display-4 lh-1 mb-4">It is great. <br/> Its team, too.</h2>
-            <p className="lead fw-normal text-muted mb-5 mb-lg-0">Three handsome students willing to use AI in a helpful way for everyone.</p>
+            <p className="lead fw-normal text-muted mb-5 mb-lg-0">Three great students willing to use AI in a helpful way for everyone ended up creating AxoloBot. Check them out! <br/><br/>
+            <a href="https://www.linkedin.com/in/raul-portugues/"> 
+              <button className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+              <span className="d-flex align-items-center">
+              <i className="bi-linkedin me-2" />
+              <span className="small">Raúl's Linkedin</span>
+            </span>
+          </button>
+          </a>
+          <br/>
+          <a href="https://www.linkedin.com/in/diegogarciaperez/"> 
+              <button className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+              <span className="d-flex align-items-center">
+              <i className="bi-linkedin me-2" />
+              <span className="small">Diego's Linkedin</span>
+            </span>
+          </button>
+          </a>
+          <br/>
+          <a href="https://www.linkedin.com/in/jorge-lizcano/"> 
+              <button className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+              <span className="d-flex align-items-center">
+              <i className="bi-linkedin me-2" />
+              <span className="small">Jorge's Linkedin</span>
+            </span>
+          </button>
+          </a>
+          
+          
+          
+          </p>
+            
           </div>
+          
           <div className="col-sm-8 col-md-6">
-            <div className="px-5 px-sm-0"><img className="img-fluid rounded-circle" src="https://source.unsplash.com/u8Jn2rzYIps/900x900" alt="..." /></div>
+            <div className="px-5 px-sm-0"><img className="img-fluid" src={team} alt="..." /></div>
           </div>
         </div>
       </div>
     </section>
     {/* App badge section*/}
-    <section className="bg-gradient-primary-to-secondary" id="download">
+    <section className="bg-gradient-primary-to-secondary">
       <div className="container px-5">
-        <h2 className="text-center text-white font-alt mb-4">Try Axolobot now!</h2>
+        <h2 className="text-center text-white font-alt mb-4">Thanks for your support! <br/> AxoloBot will be waiting for your tasty tweets around here.</h2>
       </div>
     </section>
     {/* Footer*/}
     <footer className="bg-black text-center py-5">
       <div className="container px-5">
         <div className="text-white-50 small">
-          <div className="mb-2">© Axolobot 2021</div>
+          <div className="mb-2">© AxoloBot 2021</div>
         </div>
       </div>
     </footer>
