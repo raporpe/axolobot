@@ -143,11 +143,11 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 				"Bye bye! 😺",
 			},
 			spanishLang: {
-				"Bye! 👋",
-				"Au revoir! 🤙",
-				"Adios! 🤠",
-				"See you soon! 🙃",
-				"Bye bye! 😺",
+				"¡Chao pescao! 👋",
+				"¡Hasta luego! 🤙",
+				"¡Tá luego! 🤠",
+				"¡Nos vemos! 🙃",
+				"¡Adiós! 😺",
 			},
 		}
 
