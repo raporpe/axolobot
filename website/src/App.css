@@ -11661,3 +11661,7 @@ footer a:hover, footer a:active, footer a:focus {
     max-width: 17rem;
   }
 }
+
+.credits{
+  font-size: calc(1rem + 0.3vw);
+}

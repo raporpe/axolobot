@@ -177,7 +177,11 @@ function App() {
           <div className="col-12 col-lg-5">
             <h2 className="display-4 lh-1 mb-4">It is great. <br/> Its team, too.</h2>
             <p className="lead fw-normal text-muted mb-5 mb-lg-0">Three great students willing to use AI in a helpful way for everyone ended up creating AxoloBot. Check them out! <br/><br/>
-            <a href="https://www.linkedin.com/in/raul-portugues/"> 
+          </p>
+
+          <div>
+            <div>
+          <a href="https://www.linkedin.com/in/raul-portugues/"> 
               <button className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
               <span className="d-flex align-items-center">
               <i className="bi-linkedin me-2" />
@@ -185,7 +189,9 @@ function App() {
             </span>
           </button>
           </a>
-          <br/>
+              </div>
+
+              <div>
           <a href="https://www.linkedin.com/in/diegogarciaperez/"> 
               <button className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
               <span className="d-flex align-items-center">
@@ -194,7 +200,9 @@ function App() {
             </span>
           </button>
           </a>
-          <br/>
+          </div>
+
+          <div>
           <a href="https://www.linkedin.com/in/jorge-lizcano/"> 
               <button className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
               <span className="d-flex align-items-center">
@@ -203,11 +211,8 @@ function App() {
             </span>
           </button>
           </a>
-          
-          
-          
-          </p>
-            
+          </div>
+          </div>
           </div>
           
           <div className="col-sm-8 col-md-6">
@@ -220,6 +225,7 @@ function App() {
     <section className="bg-gradient-primary-to-secondary">
       <div className="container px-5">
         <h2 className="text-center text-white font-alt mb-4">Thanks for your support! <br/> AxoloBot will be waiting for your tasty tweets around here.</h2>
+        <p className="text-center text-white font-alt mb-4 credits">Credits to Enrique Monroy for the awesome logo &#9834; </p>
       </div>
     </section>
     {/* Footer*/}
@@ -296,12 +302,6 @@ function App() {
         </div>
       </div>
     </div>
-    {/* Bootstrap core JS*/}
-    {/* Core theme JS*/}
-    {/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/}
-    {/* * *                               SB Forms JS                               * **/}
-    {/* * * Activate your form at https://startbootstrap.com/solution/contact-forms * **/}
-    {/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/}
   </div>
   );
 }
