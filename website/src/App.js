@@ -2,7 +2,7 @@ import logo from './logo.png';
 import twitterlogo from './twitter-logo.png'
 import './App.css';
 import phonephoto from './background-phone.png';
-import explanation from './explanation.png';
+import explanation from './explanation.jpg';
 import team from './team.png';
 
 function App() {
@@ -109,7 +109,7 @@ function App() {
                   <div className="text-center">
                     <i className="bi-search icon-feature text-gradient d-block mb-3" />
                     <h3 className="font-alt">1. Look for the tweet</h3>
-                    <p className="text-muted mb-0">The tweet must be not older than 7 days and written in English or Spanish.</p>
+                    <p className="text-muted mb-0">The tweet must be not older than 7 days, written in English or Spanish with at least 1 reply.</p>
                   </div>
                 </div>
                 <div className="col-md-6 mb-5">
