@@ -208,13 +208,13 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 		}
 
 		responseGeneralSlightNegative := map[string]string{
-			englishLang: "The replies are slightly negative! 😶 \n",
-			spanishLang: "Las respuestas son ligeramente negativas! 😶 \n",
+			englishLang: "The replies are slightly negative!\n",
+			spanishLang: "Las respuestas son ligeramente negativas!\n",
 		}
 
 		responseGeneralSlightPositive := map[string]string{
-			englishLang: "The replies are slightly positive! 😶 \n",
-			spanishLang: "¡Las respuestas son ligeramente positivas! 😶 \n",
+			englishLang: "The replies are slightly positive!\n",
+			spanishLang: "¡Las respuestas son ligeramente positivas!\n",
 		}
 
 		responseGeneralVeryNegative := map[string]string{
