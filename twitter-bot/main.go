@@ -205,12 +205,22 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			spanishLang: "¡Ni fu ni fa! Las respuestas están muy equilibradas 😶 \n",
 		}
 
-		responseGeneralNegative := map[string]string{
+		responseGeneralSlightNegative := map[string]string{
+			englishLang: "The responses are slightly negative! 😶 \n",
+			spanishLang: "Las respuestan son ligeramente negativas! 😶 \n",
+		}
+
+		responseGeneralSlightPositive := map[string]string{
+			englishLang: "The responses are slightly positive! 😶 \n",
+			spanishLang: "¡Las respuestas son ligeramente positivas! 😶 \n",
+		}
+
+		responseGeneralVeryNegative := map[string]string{
 			englishLang: "%v%% of the tweets are negative! %v \n",
 			spanishLang: "¡El %v%% de los tweets son negativos! %v \n",
 		}
 
-		responseGeneralPositive := map[string]string{
+		responseGeneralVeryPositive := map[string]string{
 			englishLang: "%v%% of the tweets are positive! %v \n",
 			spanishLang: "¡El %v%% de los tweets son positivos! %v \n",
 		}
@@ -241,16 +251,24 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			positivePercentage := positiveTweets * 100 / l
 
 			// If the percentages are very close
-			if negativePercentage >= 47 && negativePercentage <= 53 {
+			if negativePercentage == 50 || positivePercentage == 50 {
 				responseText += fmt.Sprintf(responseGeneralNeutral[lang])
+
+				// Tweets are slightly negative
+			} else if negativePercentage > 50 && negativePercentage <= 55 {
+				responseText += fmt.Sprintf(responseGeneralSlightNegative[lang])
+
+				// Tweets are slightly positive
+			} else if positivePercentage > 50 && positivePercentage <= 55 {
+				responseText += fmt.Sprintf(responseGeneralSlightPositive[lang])
 
 				// Most tweets negative
 			} else if negativeTweets >= positiveTweets {
-				responseText += fmt.Sprintf(responseGeneralNegative[lang], negativePercentage, negativeReaction[negativeIndex])
+				responseText += fmt.Sprintf(responseGeneralVeryNegative[lang], negativePercentage, negativeReaction[negativeIndex])
 
-			} else {
+			} else if negativeTweets < positiveTweets {
 				// Most tweets positive
-				responseText += fmt.Sprintf(responseGeneralPositive[lang], positivePercentage, positiveReaction[positiveIndex])
+				responseText += fmt.Sprintf(responseGeneralVeryPositive[lang], positivePercentage, positiveReaction[positiveIndex])
 			}
 			// Add the farewell message
 			responseText += byeMessages[lang][byeIndex]
