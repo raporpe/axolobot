@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"math/rand"
 	"net/http"
 	"os"
@@ -104,7 +105,7 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			continue
 		}
 
-		// There are different responses depending on the amount of tweets that can be analyzed
+		// There are different replies depending on the amount of tweets that can be analyzed
 
 		var negativeTweets int
 		var positiveTweets int
@@ -137,13 +138,11 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 		byeMessages := map[string][]string{
 			englishLang: {
 				"Bye! 👋",
-				"Au revoir! 🤙",
-				"Adios! 🤠",
 				"See you soon! 🙃",
 				"Bye bye! 😺",
+				"¡Adiós! 🤠",
 			},
 			spanishLang: {
-				"¡Chao pescao! 👋",
 				"¡Hasta luego! 🤙",
 				"¡Tá luego! 🤠",
 				"¡Nos vemos! 🙃",
@@ -154,11 +153,14 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 		negativeReaction := []string{
 			"🙀", "😰", "😢", "😿", "😮", "🥴", "😱", "😪",
 			"😥", "😨", "😭", "😢", "😲", "😧", "☹️", "🙁",
-			"😦", "😵",
+			"😦", "😵", "🥵", "🥶", "😳", "🤒", "😈",
+			"☠️", "💀",
 		}
 
 		positiveReaction := []string{
-			"🤙", "😄", "👍", "😁", "😺", "😃",
+			"🤙", "😄", "👍", "😁", "😺", "😃", "☀️", "😉",
+			"😍", "🥰", "😊", "😎", "🤩", "🙂", "😇", "🥳",
+			"😸",
 		}
 
 		// Generate random indexes for all the messages
@@ -174,55 +176,55 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 
 		responseNoTweets := map[string]string{
 
-			englishLang: "There are no tweets for me to analyse! " + negativeReaction[negativeIndex] + "\n" +
-				"I can only see Tweets posted in the last 7 days!\n" +
+			englishLang: "There are no replies for me to analyse! " + negativeReaction[negativeIndex] + "\n" +
+				"I can only see replies posted in the last 7 days!\n" +
 				"Anyway, thank you for calling me " + negativeReaction[negativeIndex],
 
-			spanishLang: "¡No he podido analizar ningún tweet! " + negativeReaction[negativeIndex] + "\n" +
-				"Recuerda que solo puedo ver tweets publicados en los últimos 7 días.\n" +
+			spanishLang: "¡No he podido analizar ninguna respuesta! " + negativeReaction[negativeIndex] + "\n" +
+				"Solo puedo ver respuestas publicadas en los últimos 7 días.\n" +
 				"Muchas gracias por llamarme de todas formas " + positiveReaction[positiveIndex],
 		}
 
 		responseFewTweetsPositive := map[string]string{
-			englishLang: "There are %v positive Tweets out of %v.\n",
+			englishLang: "There are %v positive replies out of %v.\n",
 			spanishLang: "Hay %v tweets positivos de un total de %v.\n",
 		}
 
 		responseFewTweetsNegative := map[string]string{
-			englishLang: "There are %v negative Tweets out of %v.\n",
+			englishLang: "There are %v negative replies out of %v.\n",
 			spanishLang: "Hay %v tweets negativos de un total de %v.\n",
 		}
 
 		responseFewTweetsExtra := map[string]string{
-			englishLang: "I could only analyse %v tweets. \n" +
-				"Notice that I can only see tweets posted in the last 7 days!",
-			spanishLang: "Solo pude analizar %v tweets. \n" +
-				"Recuerda que solo puedo analizar tweets publicados en los últimos 7 días.",
+			englishLang: "I could only analyse %v replies.\n" +
+				"Notice that I can only see replies posted in the last 7 days!",
+			spanishLang: "Solo pude analizar %v respuestas.\n" +
+				"Nota: solo puedo analizar respuestas publicadas en los últimos 7 días.",
 		}
 
-		responseGeneralNeutral := map[string]string{
-			englishLang: "Neither good nor bad! The responses are quite balanced! 😶 \n",
-			spanishLang: "¡Ni fu ni fa! Las respuestas están muy equilibradas 😶 \n",
+		responseGeneralBalanced := map[string]string{
+			englishLang: "The replies are perfectly balanced, as all things should be! ✨\n",
+			spanishLang: "Las respuestas están perfectamente equilibradas, como todo debería ser ✨\n",
 		}
 
 		responseGeneralSlightNegative := map[string]string{
-			englishLang: "The responses are slightly negative! 😶 \n",
-			spanishLang: "Las respuestan son ligeramente negativas! 😶 \n",
+			englishLang: "The replies are slightly negative! 😶 \n",
+			spanishLang: "Las respuestas son ligeramente negativas! 😶 \n",
 		}
 
 		responseGeneralSlightPositive := map[string]string{
-			englishLang: "The responses are slightly positive! 😶 \n",
+			englishLang: "The replies are slightly positive! 😶 \n",
 			spanishLang: "¡Las respuestas son ligeramente positivas! 😶 \n",
 		}
 
 		responseGeneralVeryNegative := map[string]string{
-			englishLang: "%v%% of the tweets are negative! %v \n",
-			spanishLang: "¡El %v%% de los tweets son negativos! %v \n",
+			englishLang: "%v%% of the replies are negative! %v \n",
+			spanishLang: "¡El %v%% de las respuestas son negativas! %v \n",
 		}
 
 		responseGeneralVeryPositive := map[string]string{
-			englishLang: "%v%% of the tweets are positive! %v \n",
-			spanishLang: "¡El %v%% de los tweets son positivos! %v \n",
+			englishLang: "%v%% of the replies are positive! %v \n",
+			spanishLang: "¡El %v%% de las respuestas son positivas! %v \n",
 		}
 
 		switch {
@@ -247,12 +249,12 @@ func MentionWorker(mentionExchanger chan Tweet, twitterClient *TwitterClient) {
 			// General response: enough tweets to analyze
 			// Welcome text
 			responseText += welcomeMessages[lang][welcomeIndex] + "\n"
-			negativePercentage := negativeTweets * 100 / l
-			positivePercentage := positiveTweets * 100 / l
+			negativePercentage := math.Round(float64(negativeTweets) * 100 / float64(l))
+			positivePercentage := 100 - negativePercentage
 
 			// If the percentages are very close
 			if negativePercentage == 50 || positivePercentage == 50 {
-				responseText += fmt.Sprintf(responseGeneralNeutral[lang])
+				responseText += fmt.Sprintf(responseGeneralBalanced[lang])
 
 				// Tweets are slightly negative
 			} else if negativePercentage > 50 && negativePercentage <= 55 {
