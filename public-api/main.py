@@ -5,9 +5,11 @@ from flask import jsonify
 import os
 import mysql.connector
 import time
+from flask_cors import CORS, cross_origin
 
 
 app = Flask(__name__)
+cors = CORS(app)
 
 class DataBase:
     
