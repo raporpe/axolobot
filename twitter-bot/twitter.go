@@ -79,7 +79,7 @@ func (c *TwitterClient) makeRequest(method string, url string) (string, error) {
 // Note: uses api v2
 func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 
-	last_mention := c.db.GetLastMentionID()
+	last_mention := c.db.GetLastRegisteredMentionID()
 	log.Println("The last mention is -> " + last_mention)
 
 	// The author id of axolobot
@@ -114,7 +114,7 @@ func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 	for _, tweet := range tweets {
 
 		// To avoid processing twice the same mention
-		mentionNotDone := !c.db.IsMentionDone(tweet)
+		mentionNotRegistered := !c.db.IsMentionRegistered(tweet)
 
 		// To avoid processing a mention from the own bot and entering a loop
 		mentionNotFromBot := tweet.UserID != axolobotUser
@@ -122,8 +122,9 @@ func (c *TwitterClient) GetNewMentions(number int) ([]Tweet, error) {
 		// To avoid answering to conversations in which the bot is not directly mentioned
 		mentionContainsBotName := strings.Contains(tweet.Text, "axolobot")
 
-		if mentionNotDone && mentionNotFromBot && mentionContainsBotName {
+		if mentionNotRegistered && mentionNotFromBot && mentionContainsBotName {
 			newTweets = append(newTweets, tweet)
+			c.db.RegisterMention(tweet)
 		}
 	}
 
@@ -225,7 +226,7 @@ func (c *TwitterClient) PostResponse(tweet Tweet) error {
 // Stores in the datbase the Tweet ID of the passed Tweet
 // When pulling new mentions, those with a already registered TweetID will be ignored
 func (c *TwitterClient) SetMentionDone(tweet Tweet) error {
-	err := c.db.InsertMention(tweet)
+	err := c.db.setMentionDone(tweet)
 	if err != nil {
 		return err
 	}
