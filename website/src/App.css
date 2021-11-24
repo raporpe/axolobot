@@ -11665,3 +11665,9 @@ footer a:hover, footer a:active, footer a:focus {
 .credits{
   font-size: calc(1rem + 0.3vw);
 }
+
+.black{
+  background-color: #000;
+  outline-color: #000;
+  border-color: #000;
+}

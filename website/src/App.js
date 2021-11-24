@@ -1,9 +1,11 @@
+import React from "react";
 import logo from './logo.png';
 import twitterlogo from './twitter-logo.png'
 import './App.css';
 import phonephoto from './background-phone.png';
 import explanation from './explanation.jpg';
 import team from './team.png';
+import Request from './Api.js'
 
 function App() {
   return (
@@ -55,6 +57,14 @@ function App() {
             <div className="mb-5 mb-lg-0 text-center text-lg-start">
               <h1 className="display-1 lh-1 mb-3">Discover what they think.</h1>
               <p className="lead fw-normal text-muted mb-5">AxoloBot is your perfect companion, it uses powerful AI techniques to know a tweet's reaction in few seconds. <br/>How? It gathers and analyse responses!</p>
+              <a href="https://github.com/raporpe/axolobot"> 
+                <button className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0 black" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+                  <span className="d-flex align-items-center">
+                    <i className="bi-github me-2" />
+                    <span className="small"> Watch on Github</span>
+                  </span>
+                </button>
+              </a>
               {/*<div className="d-flex flex-column flex-lg-row align-items-center">
                 <a className="me-lg-3 mb-4 mb-lg-0" href="#!"><img className="app-badge" src="assets/img/google-play-badge.svg" alt="..." /></a>
                 <a href="#!"><img className="app-badge" src="assets/img/app-store-badge.svg" alt="..." /></a>
@@ -91,7 +101,7 @@ function App() {
       <div className="container px-5">
         <div className="row gx-5 justify-content-center">
           <div className="col-xl-8">
-            <div className="h2 fs-1 text-white mb-4">"This is really cool, but how does this actually work?"</div>
+            <div className="h2 fs-1 text-white mb-4"><Request></Request></div>
             <img src={twitterlogo} alt="..." style={{height: '2.2rem'}} />
           </div>
         </div>
@@ -308,3 +318,6 @@ function App() {
 
 
 export default App;
+
+
+
