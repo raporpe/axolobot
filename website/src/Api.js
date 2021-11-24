@@ -30,7 +30,7 @@ class Request extends React.Component {
 
     // ComponentDidMount is used to execute the code 
     componentDidMount() {
-        this.interval = setInterval(() => this.pullData(), 1000);
+        this.interval = setInterval(() => this.pullData(), 5000);
     }
 
     componentWillUnmount() {
