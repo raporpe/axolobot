@@ -8,31 +8,44 @@ import time
 
 
 app = Flask(__name__)
-db_password = os.getenv("DB_PASSWORD")
 
-# Connect to the database
-db = None
-while db == None:
-    try:
-        db = mysql.connector.connect(host="database",
-                                    database="axolobot",
-                                    user= "root",
-                                    password=db_password)
-    except:
-        print("❌ Error when connecting to database, retrying...")
-        time.sleep(1)
-        continue
-    break
+class DataBase:
+    
+    db = None
+    last_update_time = time.time()
+    last_total_requests = 0
+    db_password = os.getenv("DB_PASSWORD")
+
+    def __init__(self):
+        # Connect to the database
+        while self.db == None:
+            try:
+                self.db = mysql.connector.connect(host="database",
+                                            database="axolobot",
+                                            user= "root",
+                                            password=self.db_password)
+            except:
+                print("❌ Error when connecting to database, retrying...")
+                time.sleep(1)
+                continue
+            break
+
+    def get_total_requests(self):
+        if time.time() - self.last_update_time > 5:
+            sql_cursor = self.db.cursor()
+            sql_cursor.execute("SELECT * FROM mention")
+            self.last_total_requests = len(sql_cursor.fetchall())
+            self.db.commit()
+            self.last_update_time = time.time()
+        return self.last_total_requests
 
 
 @app.route("/v1/info", methods=["GET"])
 def get_total_requests():
-    sql_cursor = db.cursor()
-    sql_cursor.execute("SELECT * FROM mention")
-    total_requests = len(sql_cursor.fetchall())
-    response = {"mentions": total_requests}
+    response = {"mentions": db.get_total_requests()}
     return jsonify(response)
 
 
 if __name__ == "__main__":
+    db = DataBase()
     app.run(host="0.0.0.0", debug=False, port=8080)
