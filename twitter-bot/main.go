@@ -47,7 +47,7 @@ func MentionListener(mentionExchanger chan Tweet, twitterClient *TwitterClient) 
 
 		log.Println(" 🧏 Listening for new Tweets... ")
 
-		mentions, err := twitterClient.GetNewMentions(10)
+		mentions, err := twitterClient.GetNewMentions(100)
 		if err != nil {
 			log.Println("Error getting mentions: ", err.Error())
 		}
