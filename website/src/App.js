@@ -5,11 +5,12 @@ import './App.css';
 import phonephoto from './background-phone.png';
 import explanation from './explanation.jpg';
 import team from './team.png';
-import Request from './Api.js'
+import Mentions from './Mentions.js'
+import Confetti from "./Confetti";
 
 function App() {
   return (
-    
+
     <div>
     <meta charSet="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -101,7 +102,7 @@ function App() {
       <div className="container px-5">
         <div className="row gx-5 justify-content-center">
           <div className="col-xl-8">
-            <div className="h2 fs-1 text-white mb-4"><Request></Request></div>
+            <div className="h2 fs-1 text-white mb-4">Axolobot has been used <Mentions></Mentions> times</div>
             <img src={twitterlogo} alt="..." style={{height: '2.2rem'}} />
           </div>
         </div>

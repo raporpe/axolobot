@@ -1,9 +1,10 @@
 import React from "react";
 import './App.css';
+import CountUp from 'react-countup';
 
 
 /*API REQUEST */
-class Request extends React.Component {
+class Mentions extends React.Component {
    
     // Constructor 
     constructor(props) {
@@ -11,8 +12,10 @@ class Request extends React.Component {
 
         this.state = {
             mentions: 0,
+            prevMentions: 0,
             DataisLoaded: false
         };
+
     }
 
     pullData() {
@@ -20,6 +23,7 @@ class Request extends React.Component {
             .then((res) => res.json())
             .then((json) => {
                 this.setState({
+                    prevMentions: this.state.mentions,
                     mentions: json["mentions"],
                     DataisLoaded: true
                 });
@@ -37,13 +41,34 @@ class Request extends React.Component {
         clearInterval(this.interval);
     }
 
+    mentionsStyle = {
+        color: 'white',
+        fontFamily: 'consolas',
+        backgroundColor: '#f69fa7',
+        padding: '5px',
+        margin: '2px',
+        display: 'inline-block',
+        borderRadius: '10px',
+    }
+
+    loadingStyle = {
+        display: 'inline-block',
+    }
+
+
+
+
     render() {
-        const { DataisLoaded, mentions } = this.state;
+        const { DataisLoaded, mentions, prevMentions } = this.state;
         if (!DataisLoaded) {
-        return (<div><h1>Loading tweets...</h1></div>);
+            return (<div style={this.mentionsStyle}>
+                ---
+            </div>);
         }
-        return (<div className = "App">AxoloBot has been used {mentions} times!</div>);
+        return (<div style={this.mentionsStyle}>
+                    <CountUp start={prevMentions} end={mentions} delay={0} duration="3" useEasing="true" />
+                </div>);
     }
   }
 
-  export default Request;
+  export default Mentions;
