@@ -40,23 +40,26 @@ class Mentions extends React.Component {
 
   mentionsStyle = {
     color: "white",
-    fontFamily: "consolas",
+    fontFamily: "monospace",
     backgroundColor: "#f69fa7",
-    padding: "5px",
+    //padding: "5px",
     margin: "2px",
     display: "inline-block",
     borderRadius: "10px",
+    minWidth: "90px",
   };
 
   loadingStyle = {
     display: "inline-block",
+    marginBottom: '20px',
+    padding: '5px',
   };
 
   render() {
     const { DataisLoaded, mentions, prevMentions } = this.state;
     if (!DataisLoaded) {
       return (
-        <div class="d-inline mb-1">
+        <div style={this.loadingStyle} class="py-2">
           <ContentLoader
             speed={2}
             width={90}
@@ -66,8 +69,8 @@ class Mentions extends React.Component {
             foregroundColor="#18e9ec"
             //{...props}
           >
-            <rect x="0" y="182" rx="3" ry="3" width="178" height="6" />
-            <rect x="0" y="0" rx="10" ry="10" width="90" height="55" />
+            <rect x="0" y="182" rx="3" ry="3" width="178" height="0" />
+            <rect x="0" y="0" rx="10" ry="10" width="90" height="50" />
           </ContentLoader>
         </div>
       );
