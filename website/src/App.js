@@ -6,7 +6,6 @@ import phonephoto from './background-phone.png';
 import explanation from './explanation.jpg';
 import team from './team.png';
 import Mentions from './Mentions.js'
-import Confetti from "./Confetti";
 
 function App() {
   return (
