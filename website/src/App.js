@@ -236,7 +236,7 @@ function App() {
     <section className="bg-gradient-primary-to-secondary">
       <div className="container px-5">
         <h2 className="text-center text-white font-alt mb-4">Thanks for your support! <br/> AxoloBot will be waiting for your tasty tweets around here.</h2>
-        <p className="text-center text-white font-alt mb-4 credits">Credits to Enrique Monroy for the awesome logo &#9834; </p>
+        <p className="text-center text-white font-alt mb-4 credits">Credits to Enrique Monroy for the awesome logo, watch him at <a style={{color: "white"}} href="https://www.instagram.com/monroy_art_gd/">@monroy_art_gd</a> &#9834; </p>
       </div>
     </section>
     {/* Footer*/}
