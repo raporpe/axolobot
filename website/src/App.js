@@ -57,7 +57,7 @@ function App() {
             <div className="mb-5 mb-lg-0 text-center text-lg-start">
               <h1 className="display-1 lh-1 mb-3">Discover what they think.</h1>
               <p className="lead fw-normal text-muted mb-5">AxoloBot is your perfect companion, it uses powerful AI techniques to know a tweet's reaction in few seconds. <br/>How? It gathers and analyses responses!</p>
-              <p> At the moment, Axolobot has been shut down but you can still check its code in Github.</p>
+              <p> At the moment, Axolobot has been shut down but its code can be checked in Github.</p>
               <a href="https://github.com/raporpe/axolobot"> 
                 <button className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0 black" data-bs-toggle="modal" data-bs-target="#feedbackModal">
                   <span className="d-flex align-items-center">
